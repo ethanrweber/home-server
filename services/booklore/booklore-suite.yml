@@ -1,0 +1,3 @@
+include:
+  - path: ./services/booklore.yml
+  - path: ./services/mariadb.yml

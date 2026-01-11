@@ -1,0 +1,28 @@
+services:
+  booklore:
+    image: booklore/booklore:latest
+    container_name: booklore
+    environment:
+      - USER_ID=${APP_USER_ID}
+      - GROUP_ID=${APP_GROUP_ID}
+      - TZ=${TZ}
+      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_USERNAME=${DB_USER}
+      - DATABASE_PASSWORD=${DB_PASSWORD}
+      - BOOKLORE_PORT=${BOOKLORE_PORT}
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "${BOOKLORE_PORT}:${BOOKLORE_PORT}"
+    volumes:
+      - C:\MEDIA_AUTOMATION\Booklore\Booklore\Data:/data
+      - C:\MEDIA_AUTOMATION\Booklore\Booklore\Books:/books
+      - C:\MEDIA_AUTOMATION\Booklore\Booklore\Bookdrop:/bookdrop
+    healthcheck:
+      test: wget -q -O - http://localhost:${BOOKLORE_PORT}/api/v1/healthcheck
+      interval: 60s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    restart: unless-stopped

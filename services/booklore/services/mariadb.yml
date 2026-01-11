@@ -1,0 +1,20 @@
+services:
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:11.4.5
+    container_name: mariadb
+    environment:
+      - PUID=${DB_USER_ID}
+      - PGID=${DB_GROUP_ID}
+      - TZ=${TZ}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - C:\MEDIA_AUTOMATION\Booklore\Mariadb\Config:/config
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
