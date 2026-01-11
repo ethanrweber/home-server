@@ -26,7 +26,7 @@ include:
   - path: ./services/prowlarr.yml
   - path: ./services/smokeping.yml
   - path: ./services/tautulli.yml
-  - path: ./services/tdarr.yml
+  # - path: ./services/tdarr.yml
 
 # Shared network definitions
 networks:
