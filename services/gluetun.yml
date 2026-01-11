@@ -30,4 +30,4 @@ services:
       - WIREGUARD_PRIVATE_KEY=${WG_PRIVATE_KEY}
       - WIREGUARD_ADDRESSES=10.2.0.2/32
       - DNS_ADDRESS=10.2.0.1
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
