@@ -17,7 +17,7 @@ include:
   - path: ./services/homarr.yml
 
   # booklore suite
-  - path: ./services/booklore/booklore-suite.yml
+  # - path: ./services/booklore/booklore-suite.yml
 
   # Independent services (alphabetical order)
   - path: ./services/bazarr.yml
