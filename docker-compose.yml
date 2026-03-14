@@ -16,6 +16,9 @@ include:
   # - path: ./services/overseerr.yml
   # - path: ./services/homarr.yml
 
+  # CWA
+  - path: ./services/books/calibre-web-automated.yml
+
   # Independent services (alphabetical order)
   - path: ./services/bazarr.yml
   - path: ./services/flaresolverr.yml
