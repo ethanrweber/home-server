@@ -12,7 +12,7 @@ services:
       # Sets the listening port for the application. Defaults to 8083.
       # - CWA_PORT_OVERRIDE=8083
       # Hardcover API Key required for Hardcover as a Metadata Provider, get one here: https://docs.hardcover.app/api/getting-started/
-      - HARDCOVER_TOKEN=your_hardcover_api_key_here
+      - HARDCOVER_TOKEN=${HARDCOVER_API_KEY}
       # If your library is on a network share (e.g., NFS/SMB), disables WAL and chown to reduce locking/permission issues,
       # and switches file watching to polling (more reliable on network mounts) instead of inotify.
       # Accepts: true/false (default: false)
