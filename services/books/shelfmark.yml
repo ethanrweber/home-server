@@ -11,7 +11,7 @@ services:
     volumes:
       # App configuration
       - C:\MEDIA_AUTOMATION\Shelfmark\Config:/config
-      # Default destination for book downloads
-      - C:\MEDIA_AUTOMATION\Shelfmark\Books:/books
+      # Destination for book downloads - auto ingest in CWA
+      - C:\MEDIA_AUTOMATION\Calibre-Web-Automated\BookIngest:/book-ingest
       # Required for torrent / usenet - path must match your download client's volume exactly
       - C:\MEDIA_AUTOMATION\Downloads:/data/downloads
