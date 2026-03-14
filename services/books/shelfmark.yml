@@ -1,0 +1,17 @@
+services:
+  shelfmark:
+    image: ghcr.io/calibrain/shelfmark:latest
+    container_name: shelfmark
+    environment:
+      PUID: 1000
+      PGID: 1000
+    ports:
+      - 8084:8084
+    restart: unless-stopped
+    volumes:
+      # App configuration
+      - C:\MEDIA_AUTOMATION\Shelfmark\Config:/config
+      # Destination for book downloads - auto ingest in CWA
+      - C:\MEDIA_AUTOMATION\Calibre-Web-Automated\BookIngest:/book-ingest
+      # Required for torrent / usenet - path must match your download client's volume exactly
+      - C:\MEDIA_AUTOMATION\Downloads:/data/downloads

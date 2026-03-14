@@ -16,8 +16,9 @@ include:
   # - path: ./services/overseerr.yml
   # - path: ./services/homarr.yml
 
-  # booklore suite
-  # - path: ./services/booklore/booklore-suite.yml
+  # CWA
+  - path: ./services/books/calibre-web-automated.yml
+  - path: ./services/books/shelfmark.yml
 
   # Independent services (alphabetical order)
   - path: ./services/bazarr.yml

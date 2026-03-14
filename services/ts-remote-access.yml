@@ -15,4 +15,5 @@ services:
       - 8989:8989 # sonarr
       - 7878:7878 # radarr
       - 7575:7575 # homarr
+      - 8083:8083 # calibre-web-automated
     restart: unless-stopped
