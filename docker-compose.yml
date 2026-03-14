@@ -18,6 +18,7 @@ include:
 
   # CWA
   - path: ./services/books/calibre-web-automated.yml
+  - path: ./services/books/shelfmark.yml
 
   # Independent services (alphabetical order)
   - path: ./services/bazarr.yml
