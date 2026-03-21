@@ -28,7 +28,7 @@ services:
 #      - EXTENSION_REPOS=["http://github.com/orginazation-name/repo-name", "http://github.com/orginazation-name-2/repo-name-2"]
     volumes:
       - E:\media\comics:/home/suwayomi/.local/share/Tachidesk/downloads
-      - C:\MEDIA_AUTOMATION\Suwayomi-Server\Downloads:/home/suwayomi/.local/share/Tachidesk
+      - C:\MEDIA_AUTOMATION\Suwayomi-Server:/home/suwayomi/.local/share/Tachidesk
       
     ports:
       - "4567:4567"
