@@ -27,3 +27,11 @@ docker compose up --force-recreate --build -d
 ```
 
 don't forget to also click the link inside the tailscale logs to reactivate tailscale!
+
+# listing ports
+
+to see which ports are in use across all services:
+
+```
+& "C:\Program Files\Git\bin\bash.exe" scripts/list-ports.sh
+```
