@@ -9,7 +9,7 @@ docker image prune -f
 ```
 
 # restarting containers
-if you have some containers you have commented out, but have not removed previous instances of, you can restart the relevant containers with:
+if you've disabled a service by commenting out its include line but haven't removed the old container, `docker compose up -d` will restart only the enabled services without touching the disabled one:
 
 ```
 docker compose up -d
