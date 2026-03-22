@@ -1,0 +1,15 @@
+---
+services:
+  komga:
+    image: gotson/komga
+    container_name: komga
+    environment:
+      - TZ=America/Chicago
+    volumes:
+      - ${CONFIG_ROOT}/Komga/Config:/config
+      - ${MEDIA_ROOT}/comics:/data/comics
+      - ${MEDIA_ROOT}/books:/data/books
+    ports:
+      - "25600:25600"
+    user: "1000:1000"
+    restart: unless-stopped

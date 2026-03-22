@@ -21,6 +21,7 @@ include:
 
   # comics
   - path: ./services/comics/suwayomi-server.yml
+  - path: ./services/comics/komga.yml
 
   # Independent services (alphabetical order)
   - path: ./services/bazarr.yml
