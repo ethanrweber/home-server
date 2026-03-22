@@ -4,12 +4,12 @@ docker compose file containing the services required for setting up my personal 
 # updating containers
 ```
 docker compose pull
-docker compose up --force-recreate --build -d
+docker compose up --force-recreate -d
 docker image prune -f
 ```
 
 # restarting containers
-if you have some containers you have commented out, but have not removed previous instances of, you can restart the relevant containers with:
+if you've disabled a service by commenting out its include line but haven't removed the old container, `docker compose up -d` will restart only the enabled services without touching the disabled one:
 
 ```
 docker compose up -d
@@ -23,7 +23,15 @@ click extend to push its expiration back another year
 run:
 ```
 docker compose down
-docker compose up --force-recreate --build -d
+docker compose up --force-recreate -d
 ```
 
 don't forget to also click the link inside the tailscale logs to reactivate tailscale!
+
+# listing ports
+
+to see which ports are in use across all services:
+
+```
+& "C:\Program Files\Git\bin\bash.exe" scripts/list-ports.sh
+```

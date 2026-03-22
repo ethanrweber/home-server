@@ -13,3 +13,6 @@ services:
       - ${DOWNLOADS_ROOT}:/data/downloads
     restart: unless-stopped
     network_mode: service:ts-remote-access
+    depends_on:
+      ts-remote-access:
+        condition: service_healthy
