@@ -14,7 +14,7 @@ include:
   - path: ./services/sonarr.yml
   - path: ./services/radarr.yml
   # - path: ./services/overseerr.yml
-  # - path: ./services/homarr.yml
+
 
   # books
   - path: ./services/books/calibre-web-automated.yml
