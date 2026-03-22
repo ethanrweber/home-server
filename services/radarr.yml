@@ -13,3 +13,6 @@ services:
       - ${CONFIG_ROOT}/Radarr/Backup:/data/Backup
     restart: unless-stopped
     network_mode: service:ts-remote-access
+    depends_on:
+      ts-remote-access:
+        condition: service_healthy
