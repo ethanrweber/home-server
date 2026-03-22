@@ -45,15 +45,15 @@ $lines += "# CaddyHostsSectionEnd"
 $newSection = $lines -join "`r`n"
 
 # Update hosts file
-$hosts = Get-Content $hostsFile -Raw
+$hosts = [System.IO.File]::ReadAllText($hostsFile)
 
 if ($hosts -match "(?s)# CaddyHostsSectionStart.*?# CaddyHostsSectionEnd") {
-    $hosts = $hosts -replace "(?s)# CaddyHostsSectionStart.*?# CaddyHostsSectionEnd", $newSection
+    $hosts = [regex]::Replace($hosts, "(?s)# CaddyHostsSectionStart.*?# CaddyHostsSectionEnd", $newSection)
 } else {
     $hosts = $hosts.TrimEnd() + "`r`n`r`n" + $newSection + "`r`n"
 }
 
-Set-Content $hostsFile -Value $hosts -NoNewline
+[System.IO.File]::WriteAllText($hostsFile, $hosts)
 Write-Host "Updated hosts file with $($domains.Count) Caddy domain(s):"
 foreach ($d in $domains) {
     Write-Host "  $ip  $d"
