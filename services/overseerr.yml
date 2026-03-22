@@ -7,6 +7,6 @@ services:
       - PGID=1000
       - TZ=America/Chicago
     volumes:
-      - C:\MEDIA_AUTOMATION\Overseerr\Config:/config
+      - ${CONFIG_ROOT}/Overseerr/Config:/config
     restart: unless-stopped
     network_mode: service:ts-remote-access

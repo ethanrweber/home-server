@@ -14,7 +14,7 @@ services:
       - 6881:6881 # qbittorrent
       - 6881:6881/udp # qbittorrent
     volumes:
-      - C:\MEDIA_AUTOMATION\Gluetun:/gluetun
+      - ${CONFIG_ROOT}/Gluetun:/gluetun
     environment:
       - VPN_SERVICE_PROVIDER=protonvpn
       - VPN_PORT_FORWARDING=on

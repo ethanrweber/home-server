@@ -22,12 +22,12 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NVIDIA_VISIBLE_DEVICES=all
     volumes:
-      - C:\MEDIA_AUTOMATION\Tdarr\server:/app/server
-      - C:\MEDIA_AUTOMATION\Tdarr\configs:/app/configs
-      - C:\MEDIA_AUTOMATION\Tdarr\logs:/app/logs
-      - C:\MEDIA_AUTOMATION\Tdarr\transcode_cache:/temp # note from tutorial - it's preferable to have the transcode cache on an ssd
-      - E:\media\tvshows:/home/Tdarr/Media/TVShows
-      - E:\media\movies:/home/Tdarr/Media/Movies
+      - ${CONFIG_ROOT}/Tdarr/server:/app/server
+      - ${CONFIG_ROOT}/Tdarr/configs:/app/configs
+      - ${CONFIG_ROOT}/Tdarr/logs:/app/logs
+      - ${CONFIG_ROOT}/Tdarr/transcode_cache:/temp # note from tutorial - it's preferable to have the transcode cache on an ssd
+      - ${MEDIA_ROOT}/tvshows:/home/Tdarr/Media/TVShows
+      - ${MEDIA_ROOT}/movies:/home/Tdarr/Media/Movies
     devices:
       - /dev/dri:/dev/dri
     deploy:

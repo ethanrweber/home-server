@@ -7,10 +7,10 @@ services:
       - PGID=1000
       - TZ=America/Chicago
     volumes:
-      - C:\MEDIA_AUTOMATION\Lidarr\Config:/config
-      - E:\media\music:/data/musicfolder
-      - C:\MEDIA_AUTOMATION\Downloads:/data/downloads
-      - C:\MEDIA_AUTOMATION\Lidarr\Backup:/data/Backup
+      - ${CONFIG_ROOT}/Lidarr/Config:/config
+      - ${MEDIA_ROOT}/music:/data/musicfolder
+      - ${DOWNLOADS_ROOT}:/data/downloads
+      - ${CONFIG_ROOT}/Lidarr/Backup:/data/Backup
     ports:
       - 8686:8686
     restart: unless-stopped

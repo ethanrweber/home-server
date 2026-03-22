@@ -7,9 +7,9 @@ services:
       - PGID=1000
       - TZ=America/Chicago
     volumes:
-      - C:\MEDIA_AUTOMATION\Sonarr\Config:/config
-      - C:\MEDIA_AUTOMATION\Sonarr\Backup:/data/Backup
-      - E:\media\tvshows:/data/tvshows
-      - C:\MEDIA_AUTOMATION\Downloads:/data/downloads
+      - ${CONFIG_ROOT}/Sonarr/Config:/config
+      - ${CONFIG_ROOT}/Sonarr/Backup:/data/Backup
+      - ${MEDIA_ROOT}/tvshows:/data/tvshows
+      - ${DOWNLOADS_ROOT}:/data/downloads
     restart: unless-stopped
     network_mode: service:ts-remote-access

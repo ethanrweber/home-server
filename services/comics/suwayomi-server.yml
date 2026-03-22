@@ -27,8 +27,8 @@ services:
 #      - AUTH_PASSWORD=hello123
 #      - EXTENSION_REPOS=["http://github.com/orginazation-name/repo-name", "http://github.com/orginazation-name-2/repo-name-2"]
     volumes:
-      - E:\media\comics:/home/suwayomi/.local/share/Tachidesk/downloads
-      - C:\MEDIA_AUTOMATION\Suwayomi-Server:/home/suwayomi/.local/share/Tachidesk
+      - ${MEDIA_ROOT}/comics:/home/suwayomi/.local/share/Tachidesk/downloads
+      - ${CONFIG_ROOT}/Suwayomi-Server:/home/suwayomi/.local/share/Tachidesk
       
     ports:
       - "4567:4567"

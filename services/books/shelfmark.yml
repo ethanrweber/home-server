@@ -10,8 +10,8 @@ services:
     restart: unless-stopped
     volumes:
       # App configuration
-      - C:\MEDIA_AUTOMATION\Shelfmark\Config:/config
+      - ${CONFIG_ROOT}/Shelfmark/Config:/config
       # Destination for book downloads - auto ingest in CWA
-      - C:\MEDIA_AUTOMATION\Calibre-Web-Automated\BookIngest:/book-ingest
+      - ${CONFIG_ROOT}/Calibre-Web-Automated/BookIngest:/book-ingest
       # Required for torrent / usenet - path must match your download client's volume exactly
-      - C:\MEDIA_AUTOMATION\Downloads:/data/downloads
+      - ${DOWNLOADS_ROOT}:/data/downloads

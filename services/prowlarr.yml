@@ -7,9 +7,9 @@ services:
       - PGID=1000
       - TZ=America/Chicago
     volumes:
-      - C:\MEDIA_AUTOMATION\Prowlarr\Config:/config
-      - C:\MEDIA_AUTOMATION\Prowlarr\Backup:/data/Backup
-      - C:\MEDIA_AUTOMATION\Downloads:/data/downloads
+      - ${CONFIG_ROOT}/Prowlarr/Config:/config
+      - ${CONFIG_ROOT}/Prowlarr/Backup:/data/Backup
+      - ${DOWNLOADS_ROOT}:/data/downloads
     ports:
       - 9697:9696
     restart: unless-stopped
