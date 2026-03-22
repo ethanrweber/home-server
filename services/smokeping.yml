@@ -14,5 +14,5 @@ services:
       - ${CONFIG_ROOT}/SmokePing/config:/config
       - ${CONFIG_ROOT}/SmokePing/data:/data
     ports:
-      - 80:80
+      - 8085:80
     restart: unless-stopped

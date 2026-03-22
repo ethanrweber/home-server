@@ -20,7 +20,10 @@ include:
   - path: ./services/books/shelfmark.yml
 
   # comics
-  - path: ./services/comics/suwayomi-server.yml
+  - path: ./services/comics/komga.yml
+
+  # reverse proxy
+  - path: ./services/caddy.yml
 
   # Independent services (alphabetical order)
   - path: ./services/bazarr.yml
