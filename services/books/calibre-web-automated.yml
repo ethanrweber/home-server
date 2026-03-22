@@ -27,14 +27,14 @@ services:
       # - DISABLE_LIBRARY_AUTOMOUNT=false
     volumes:
       # CW users migrating should stop their existing CW instance, make a copy of the config folder, and bind that here to carry over all of their user settings etc.
-      - C:\MEDIA_AUTOMATION\Calibre-Web-Automated\Config:/config
+      - ${CONFIG_ROOT}/Calibre-Web-Automated/Config:/config
       # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
-      - C:\MEDIA_AUTOMATION\Calibre-Web-Automated\BookIngest:/cwa-book-ingest
+      - ${CONFIG_ROOT}/Calibre-Web-Automated/BookIngest:/cwa-book-ingest
       # If you don't have an existing library, CWA will automatically create one at the bind provided here
-      - E:\media\books:/calibre-library
+      - ${MEDIA_ROOT}/books:/calibre-library
       # If you use calibre plugins, you can bind your plugins folder here to have CWA attempt to add them to it's workflow (WIP)
       # If you are starting with a fresh install, you also need to copy customize.py.json to the Calibre config volume above, in /path/to/config/folder/.config/calibre/customize.py.json, see the README for more info
-      - C:\MEDIA_AUTOMATION\Calibre-Web-Automated\Plugins:/config/.config/calibre/plugins
+      - ${CONFIG_ROOT}/Calibre-Web-Automated/Plugins:/config/.config/calibre/plugins
     # IMPORTANT - using tailscale for remote access, port is disabled here and enabled in ts-remote-access.yml
     # ports:
     #   # Change the first number to change the port you want to access the Web UI, not the second

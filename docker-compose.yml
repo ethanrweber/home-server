@@ -13,8 +13,7 @@ include:
   # Services using ts-remote-access network namespace
   - path: ./services/sonarr.yml
   - path: ./services/radarr.yml
-  # - path: ./services/overseerr.yml
-  # - path: ./services/homarr.yml
+
 
   # books
   - path: ./services/books/calibre-web-automated.yml
@@ -26,7 +25,7 @@ include:
   # Independent services (alphabetical order)
   - path: ./services/bazarr.yml
   - path: ./services/flaresolverr.yml
-  # - path: ./services/lidarr.yml     # Disabled - uncomment to enable
+
   - path: ./services/prowlarr.yml
   - path: ./services/smokeping.yml
   - path: ./services/tautulli.yml

@@ -9,8 +9,8 @@ services:
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6881
     volumes:
-      - C:\MEDIA_AUTOMATION\Qbittorrent\appdata:/config
-      - C:\MEDIA_AUTOMATION\Downloads:/data/downloads # should match other download directories
+      - ${CONFIG_ROOT}/Qbittorrent/appdata:/config
+      - ${DOWNLOADS_ROOT}:/data/downloads # should match other download directories
     restart: unless-stopped
     network_mode: service:gluetun
     depends_on:

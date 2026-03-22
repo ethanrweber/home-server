@@ -7,9 +7,9 @@ services:
       - PGID=1000
       - TZ=America/Chicago
     volumes:
-      - C:\MEDIA_AUTOMATION\Bazarr/Config:/config
-      - E:\media\movies:/data/movies # should match radarr movies directory
-      - E:\media\tvshows:/data/tvshows # should match sonarr tv shows directory
+      - ${CONFIG_ROOT}/Bazarr/Config:/config
+      - ${MEDIA_ROOT}/movies:/data/movies # should match radarr movies directory
+      - ${MEDIA_ROOT}/tvshows:/data/tvshows # should match sonarr tv shows directory
     ports:
       - 6767:6767
     restart: unless-stopped
