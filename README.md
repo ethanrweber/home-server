@@ -4,7 +4,7 @@ docker compose file containing the services required for setting up my personal 
 # updating containers
 ```
 docker compose pull
-docker compose up --force-recreate --build -d
+docker compose up --force-recreate -d
 docker image prune -f
 ```
 
@@ -23,7 +23,7 @@ click extend to push its expiration back another year
 run:
 ```
 docker compose down
-docker compose up --force-recreate --build -d
+docker compose up --force-recreate -d
 ```
 
 don't forget to also click the link inside the tailscale logs to reactivate tailscale!
