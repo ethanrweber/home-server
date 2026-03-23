@@ -1,8 +1,34 @@
 ---
 services:
+  ts-komga:
+    image: tailscale/tailscale:latest
+    container_name: ts-komga
+    hostname: komga
+    environment:
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_SERVE_CONFIG=/config/serve-config.json
+      - TS_ENABLE_HEALTH_CHECK=true
+    volumes:
+      - ${CONFIG_ROOT}/ts-komga/state:/var/lib/tailscale
+      - ${CONFIG_ROOT}/ts-komga/config:/config
+    cap_add:
+      - net_admin
+      - sys_module
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9002/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
   komga:
     image: gotson/komga
     container_name: komga
+    network_mode: service:ts-komga
+    depends_on:
+      ts-komga:
+        condition: service_healthy
     environment:
       - TZ=America/Chicago
     volumes:
