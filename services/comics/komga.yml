@@ -1,26 +1,14 @@
 ---
 services:
   ts-komga:
-    image: tailscale/tailscale:latest
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
     container_name: ts-komga
     hostname: komga
-    environment:
-      - TS_STATE_DIR=/var/lib/tailscale
-      - TS_AUTHKEY=${TS_AUTHKEY}
-      - TS_SERVE_CONFIG=/config/serve-config.json
-      - TS_ENABLE_HEALTH_CHECK=true
     volumes:
       - ${CONFIG_ROOT}/ts-komga/state:/var/lib/tailscale
       - ${CONFIG_ROOT}/ts-komga/config:/config
-    cap_add:
-      - net_admin
-      - sys_module
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9002/healthz"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: unless-stopped
 
   komga:
     image: gotson/komga
