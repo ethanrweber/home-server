@@ -28,40 +28,41 @@ docker compose up --force-recreate -d
 
 don't forget to also click the link inside the tailscale logs to reactivate tailscale!
 
-# caddy reverse proxy
+# tailscale serve & funnel
 
-caddy acts as a reverse proxy so all services are accessed through a single port (80) instead of each service exposing its own port. this means only one Windows Firewall rule is needed for LAN access, and it sets the foundation for a future Cloudflare Tunnel setup.
+some services have their own tailscale sidecar container for remote access. each sidecar extends a shared base template (`services/tailscale-sidecar.yml`) and uses a `serve-config.json` to configure routing.
 
 ## how it works
-- caddy listens on port 80 and routes requests by subdomain (e.g., `http://komga.local` → komga container)
-- services behind caddy don't publish their own ports — caddy reaches them via Docker's internal DNS
-- the Caddyfile is at `C:\MEDIA_AUTOMATION\Caddy\Caddyfile`
+- each sidecar gets its own hostname on the tailnet (e.g., `komga.tail17ddbe.ts.net`)
+- the service shares the sidecar's network namespace via `network_mode: service:<sidecar>`
+- tailscale serve proxies HTTPS on port 443 to the service's internal port
+- setting `AllowFunnel` to `true` in the serve config makes the service publicly accessible
 
-## adding a new service to caddy
-1. add a block to the Caddyfile:
-   ```
-   http://myservice.local {
-       reverse_proxy container-name:port
-   }
-   ```
-2. reload caddy:
-   ```
-   docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
-   ```
-3. add DNS so devices can resolve the subdomain:
-   - **router**: add a DNS Host Mapping entry (`myservice.local` → `192.168.1.2`) under Advanced > IP Address > DNS Host Mapping. this covers devices using the router for DNS (e.g., phones).
-   - **host PC**: run `.\scripts\sync-hosts.ps1` in an admin PowerShell. this parses domains from the Caddyfile and `LOCAL_STATIC_IP` from `.env`, then updates a managed section in the hosts file. needed because this PC uses Cloudflare DNS (`1.1.1.1`) instead of the router.
-4. remove the `ports:` section from the service's compose file if it was previously exposed directly
+## current funneled services
+| service | url | serve config |
+|---------|-----|-------------|
+| komga | `https://komga.tail17ddbe.ts.net` | `services/comics/ts-komga-config/serve-config.json` |
+| calibre-web-automated | `https://calibre.tail17ddbe.ts.net` | `services/books/ts-calibre-web-automated-config/serve-config.json` |
 
-## windows firewall
-caddy requires an inbound firewall rule for LAN access. this was created with:
-```powershell
-New-NetFirewallRule -DisplayName "Caddy Reverse Proxy" -Direction Inbound -LocalPort 80,443 -Protocol TCP -Action Allow -Profile Private
-```
-this only needs to be done once — individual services behind caddy don't need their own firewall rules.
+serve configs are stored in the repo alongside their service compose files and mounted directly into the sidecar container.
 
-## why plain HTTP (not HTTPS)
-caddy's `tls internal` generates certificates from its own CA inside the container. devices on the LAN don't trust this CA, causing connection timeouts (especially on Android). plain HTTP is fine for local traffic that never leaves the LAN. when a Cloudflare Tunnel is set up later, Cloudflare will handle HTTPS with real certificates.
+## adding a new service with a tailscale sidecar
+1. create a state directory: `%CONFIG_ROOT%\ts-<service>\state`
+2. create a `ts-<service>-config/serve-config.json` next to the service's compose file (copy from an existing one and update the port)
+3. add a sidecar to the service's compose file using `extends`:
+   ```yaml
+   ts-myservice:
+     extends:
+       file: ../tailscale-sidecar.yml
+       service: tailscale-sidecar
+     container_name: ts-myservice
+     hostname: myservice
+     volumes:
+       - ${CONFIG_ROOT}/ts-myservice/state:/var/lib/tailscale
+       - ${CONFIG_ROOT}/ts-myservice/config:/config
+   ```
+4. set the service's `network_mode: service:ts-myservice` and add a `depends_on` with `condition: service_healthy`
+5. enable the `funnel` node attribute in the [tailscale ACL policy](https://login.tailscale.com/admin/acls) if not already done (only needs to be done once for your tailscale account, _not_ once per service)
 
 # listing ports
 

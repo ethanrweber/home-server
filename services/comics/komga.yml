@@ -1,8 +1,22 @@
 ---
 services:
+  ts-komga:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-komga
+    hostname: komga
+    volumes:
+      - ${CONFIG_ROOT}/ts-komga/state:/var/lib/tailscale
+      - ./ts-komga-config:/config
+
   komga:
     image: gotson/komga
     container_name: komga
+    network_mode: service:ts-komga
+    depends_on:
+      ts-komga:
+        condition: service_healthy
     environment:
       - TZ=America/Chicago
     volumes:

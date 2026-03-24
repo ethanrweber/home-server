@@ -1,30 +1,29 @@
 ---
 services:
+  ts-calibre-web-automated:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-calibre-web-automated
+    hostname: calibre
+    volumes:
+      - ${CONFIG_ROOT}/ts-calibre-web-automated/state:/var/lib/tailscale
+      - ./ts-calibre-web-automated-config:/config
+
   calibre-web-automated:
     image: crocodilestick/calibre-web-automated:latest
     container_name: calibre-web-automated
+    network_mode: service:ts-calibre-web-automated
+    depends_on:
+      ts-calibre-web-automated:
+        condition: service_healthy
     environment:
-      # Only change these if you know what you're doing
       - PUID=1000
       - PGID=1000
-      # Edit to match your current timezone https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
       - TZ=America/Chicago
-      # Sets the listening port for the application. Defaults to 8083.
-      # - CWA_PORT_OVERRIDE=8083
       # Hardcover API Key required for Hardcover as a Metadata Provider, get one here: https://docs.hardcover.app/api/getting-started/
       - HARDCOVER_TOKEN=${HARDCOVER_API_KEY}
-      # If your library is on a network share (e.g., NFS/SMB), disables WAL and chown to reduce locking/permission issues,
-      # and switches file watching to polling (more reliable on network mounts) instead of inotify.
-      # Accepts: true/false (default: false)
       - NETWORK_SHARE_MODE=false
-      # If you want to force polling mode regardless of share type, set CWA_WATCH_MODE=poll
-      # - CWA_WATCH_MODE=poll
-      # If running behind multiple proxies (e.g., Cloudflare Tunnel + reverse proxy), set the total number of proxies
-      # This ensures proper IP detection for session protection and rate limiting (default: 1)
-      # - TRUSTED_PROXY_COUNT=2
-      # Skip the automatic library detection/mount at startup. When enabled, the auto-library service will not run.
-      # Accepts: true/yes/1 to disable auto-mount (default: false)
-      # - DISABLE_LIBRARY_AUTOMOUNT=false
     volumes:
       # CW users migrating should stop their existing CW instance, make a copy of the config folder, and bind that here to carry over all of their user settings etc.
       - ${CONFIG_ROOT}/Calibre-Web-Automated/Config:/config
@@ -35,15 +34,4 @@ services:
       # If you use calibre plugins, you can bind your plugins folder here to have CWA attempt to add them to it's workflow (WIP)
       # If you are starting with a fresh install, you also need to copy customize.py.json to the Calibre config volume above, in /path/to/config/folder/.config/calibre/customize.py.json, see the README for more info
       - ${CONFIG_ROOT}/Calibre-Web-Automated/Plugins:/config/.config/calibre/plugins
-    # IMPORTANT - using tailscale for remote access, port is disabled here and enabled in ts-remote-access.yml
-    # ports:
-    #   # Change the first number to change the port you want to access the Web UI, not the second
-    #   - 8083:8083
-    # If you set CWA_PORT_OVERRIDE to a port below 1024, you may need to uncomment the following line:
-    # cap_add:
-    #   - NET_BIND_SERVICE
     restart: unless-stopped
-    network_mode: service:ts-remote-access
-    depends_on:
-      ts-remote-access:
-        condition: service_healthy
