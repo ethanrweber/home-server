@@ -16,7 +16,6 @@ services:
     ports:
       - 8989:8989 # sonarr
       - 7878:7878 # radarr
-      - 8083:8083 # calibre-web-automated
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:9002/healthz"]
       interval: 30s
