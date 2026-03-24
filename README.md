@@ -41,14 +41,14 @@ some services have their own tailscale sidecar container for remote access. each
 ## current funneled services
 | service | url | serve config |
 |---------|-----|-------------|
-| komga | `https://komga.tail17ddbe.ts.net` | `%CONFIG_ROOT%\ts-komga\config\serve-config.json` |
-| calibre-web-automated | `https://calibre.tail17ddbe.ts.net` | `%CONFIG_ROOT%\ts-calibre-web-automated\config\serve-config.json` |
+| komga | `https://komga.tail17ddbe.ts.net` | `services/comics/ts-komga-config/serve-config.json` |
+| calibre-web-automated | `https://calibre.tail17ddbe.ts.net` | `services/books/ts-calibre-web-automated-config/serve-config.json` |
 
-the general pattern is `%CONFIG_ROOT%\ts-<service>\config\serve-config.json`. these are outside the repo since they live under `CONFIG_ROOT` alongside other service config data.
+serve configs are stored in the repo alongside their service compose files and mounted directly into the sidecar container.
 
 ## adding a new service with a tailscale sidecar
-1. create config and state directories: `C:\MEDIA_AUTOMATION\ts-<service>\config` and `C:\MEDIA_AUTOMATION\ts-<service>\state`
-2. create a `serve-config.json` in the config directory (copy from an existing one and update the port)
+1. create a state directory: `%CONFIG_ROOT%\ts-<service>\state`
+2. create a `ts-<service>-config/serve-config.json` next to the service's compose file (copy from an existing one and update the port)
 3. add a sidecar to the service's compose file using `extends`:
    ```yaml
    ts-myservice:
