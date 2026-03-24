@@ -8,7 +8,7 @@ services:
     hostname: komga
     volumes:
       - ${CONFIG_ROOT}/ts-komga/state:/var/lib/tailscale
-      - ${CONFIG_ROOT}/ts-komga/config:/config
+      - ./ts-komga-config:/config
 
   komga:
     image: gotson/komga
