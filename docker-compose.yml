@@ -31,6 +31,9 @@ include:
   - path: ./services/tautulli.yml
   # - path: ./services/tdarr.yml
 
+  # Homepage
+  - path: ./services/homepage/homepage.yml
+
 # Shared network definitions
 networks:
   arrs:
