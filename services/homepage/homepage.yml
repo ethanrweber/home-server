@@ -1,0 +1,28 @@
+---
+services:
+  ts-homepage:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-homepage
+    hostname: homepage
+    volumes:
+      - ${CONFIG_ROOT}/ts-homepage/state:/var/lib/tailscale
+      - ./ts-homepage-config:/config
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    network_mode: service:ts-homepage
+    depends_on:
+      ts-homepage:
+        condition: service_healthy
+    volumes:
+      - ${CONFIG_ROOT}/Homepage/Config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=homepage.${TS_DOMAIN} # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+    restart: unless-stopped
