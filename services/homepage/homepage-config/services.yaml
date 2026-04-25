@@ -8,10 +8,16 @@
           href: https://app.plex.tv/
           description: Plex is a media server that organizes your personal media and streams it to your devices.
           ping: "{{HOMEPAGE_VAR_PLEX_URL}}"
-          widget:
-              type: plex
+          widgets:
+            - type: plex
               url: "{{HOMEPAGE_VAR_PLEX_URL}}"
               key: "{{HOMEPAGE_VAR_PLEX_TOKEN}}"
+            - type: tautulli
+              url: "{{HOMEPAGE_VAR_TAUTULLI_URL}}"
+              key: "{{HOMEPAGE_VAR_TAUTULLI_KEY}}"
+              enableUser: true # optional, defaults to false
+              showEpisodeNumber: true # optional, defaults to false
+              expandOneStreamToTwoRows: false # optional, defaults to true
 
     - Komga:
           icon: komga.png
