@@ -7,11 +7,11 @@
           icon: plex.png
           href: https://app.plex.tv/
           description: Plex is a media server that organizes your personal media and streams it to your devices.
-          ping: {{HOMEPAGE_VAR_PLEX_URL}}
+          ping: "{{HOMEPAGE_VAR_PLEX_URL}}"
           widget:
               type: plex
-              url: {{HOMEPAGE_VAR_PLEX_URL}}
-              key: {{HOMEPAGE_VAR_PLEX_TOKEN}}
+              url: "{{HOMEPAGE_VAR_PLEX_URL}}"
+              key: "{{HOMEPAGE_VAR_PLEX_TOKEN}}"
 
     - Komga:
           icon: komga.png
@@ -21,7 +21,7 @@
           widget:
               type: komga
               url: http://ts-komga:25600
-              username: {{HOMEPAGE_VAR_KOMGA_USERNAME}}
+              username: "{{HOMEPAGE_VAR_KOMGA_USERNAME}}"
               password: "{{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
 
     - Calibre-Web-Automated:
@@ -32,7 +32,7 @@
           widget:
               type: calibreweb
               url: http://ts-calibre-web-automated:8083
-              username: {{HOMEPAGE_VAR_CALIBRE_USERNAME}}
+              username: "{{HOMEPAGE_VAR_CALIBRE_USERNAME}}"
               password: "{{HOMEPAGE_VAR_CALIBRE_PASSWORD}}"
 
 - Media Automation (Tailnet Only):
@@ -44,7 +44,7 @@
           widget:
               type: sonarr
               url: http://ts-remote-access:8989
-              key: {{HOMEPAGE_VAR_SONARR_KEY}}
+              key: "{{HOMEPAGE_VAR_SONARR_KEY}}"
               enableQueue: true # optional, defaults to false
 
     - Radarr:
@@ -55,11 +55,11 @@
           widget:
               type: radarr
               url: http://ts-remote-access:7878
-              key: {{HOMEPAGE_VAR_RADARR_KEY}}
+              key: "{{HOMEPAGE_VAR_RADARR_KEY}}"
               enableQueue: true # optional, defaults to false
 
     - Shelfmark:
-        icon: shelfmark.png
-        href: https://shelfmark.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-        description: Shelfmark is a book downloading tool
-        ping: http://ts-shelfmark:8084
+          icon: shelfmark.png
+          href: https://shelfmark.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+          description: Shelfmark is a book downloading tool
+          ping: http://ts-shelfmark:8084
