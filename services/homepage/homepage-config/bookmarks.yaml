@@ -1,0 +1,8 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/bookmarks
+
+- Resources:
+    - Home Server Github:
+        - abbr: GH
+          href: https://github.com/ethanrweber/home-server
