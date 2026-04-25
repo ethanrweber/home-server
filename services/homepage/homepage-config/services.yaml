@@ -12,6 +12,7 @@
             - type: plex
               url: "{{HOMEPAGE_VAR_PLEX_URL}}"
               key: "{{HOMEPAGE_VAR_PLEX_TOKEN}}"
+              fields: [ "movies", "tv" ]
             - type: tautulli
               url: "{{HOMEPAGE_VAR_TAUTULLI_URL}}"
               key: "{{HOMEPAGE_VAR_TAUTULLI_KEY}}"
