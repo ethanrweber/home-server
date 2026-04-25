@@ -57,3 +57,9 @@
               url: http://ts-remote-access:7878
               key: {{HOMEPAGE_VAR_RADARR_KEY}}
               enableQueue: true # optional, defaults to false
+
+    - Shelfmark:
+        icon: shelfmark.png
+        href: https://shelfmark.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Shelfmark is a book downloading tool
+        ping: http://ts-shelfmark:8084
