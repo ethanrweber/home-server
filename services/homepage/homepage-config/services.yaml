@@ -7,15 +7,15 @@
           icon: plex.png
           href: https://app.plex.tv/
           description: Plex is a media server that organizes your personal media and streams it to your devices.
-          ping: http://192.168.1.176:32400
+          ping: {{HOMEPAGE_VAR_PLEX_URL}}
           widget:
               type: plex
-              url: http://192.168.1.176:32400
+              url: {{HOMEPAGE_VAR_PLEX_URL}}
               key: {{HOMEPAGE_VAR_PLEX_TOKEN}}
 
     - Komga:
           icon: komga.png
-          href: https://komga.tail17ddbe.ts.net/
+          href: https://komga.{{HOMEPAGE_VAR_TS_DOMAIN}}/
           description: Komga is a comics/manga server
           ping: http://ts-komga:25600
           widget:
@@ -26,7 +26,7 @@
 
     - Calibre-Web-Automated:
           icon: calibre-web.png
-          href: https://calibre.tail17ddbe.ts.net/
+          href: https://calibre.{{HOMEPAGE_VAR_TS_DOMAIN}}/
           description: Calibre-Web-Automated is a web-based e-book library manager
           ping: http://ts-calibre-web-automated:8083
           widget:
@@ -38,7 +38,7 @@
 - Media Automation (Tailnet Only):
     - Sonarr:
           icon: sonarr.png
-          href: http://home-server.tail17ddbe.ts.net:8989
+          href: http://home-server.{{HOMEPAGE_VAR_TS_DOMAIN}}:8989
           description: Sonarr is a TV series management tool that automates the process of finding, downloading, and organizing TV shows.
           ping: http://ts-remote-access:8989
           widget:
@@ -49,7 +49,7 @@
 
     - Radarr:
           icon: radarr.png
-          href: http://home-server.tail17ddbe.ts.net:7878
+          href: http://home-server.{{HOMEPAGE_VAR_TS_DOMAIN}}:7878
           description: Radarr is a movie management tool that automates the process of finding, downloading, and organizing movies.
           ping: http://ts-remote-access:7878
           widget:
