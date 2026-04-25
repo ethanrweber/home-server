@@ -1,12 +1,25 @@
+---
 services:
+  ts-shelfmark:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-shelfmark
+    hostname: shelfmark
+    volumes:
+      - ${CONFIG_ROOT}/ts-shelfmark/state:/var/lib/tailscale
+      - ./ts-shelfmark-config:/config
+
   shelfmark:
     image: ghcr.io/calibrain/shelfmark:latest
     container_name: shelfmark
+    network_mode: service:ts-shelfmark
+    depends_on:
+      ts-shelfmark:
+        condition: service_healthy
     environment:
       PUID: 1000
       PGID: 1000
-    ports:
-      - 8084:8084
     restart: unless-stopped
     volumes:
       # App configuration
