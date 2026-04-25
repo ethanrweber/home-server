@@ -1,0 +1,26 @@
+---
+services:
+  ts-tautulli:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-tautulli
+    hostname: tautulli
+    volumes:
+      - ${CONFIG_ROOT}/ts-tautulli/state:/var/lib/tailscale
+      - ./ts-tautulli-config:/config
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    network_mode: service:ts-tautulli
+    depends_on:
+      ts-tautulli:
+        condition: service_healthy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${CONFIG_ROOT}/Tautulli/Config:/config
+    restart: unless-stopped

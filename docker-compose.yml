@@ -27,7 +27,7 @@ include:
 
   - path: ./services/prowlarr.yml
   - path: ./services/smokeping.yml
-  - path: ./services/tautulli.yml
+  - path: ./services/tautulli/tautulli.yml
   # - path: ./services/tdarr.yml
 
   # Homepage
