@@ -14,7 +14,7 @@
               key: "{{HOMEPAGE_VAR_PLEX_TOKEN}}"
               fields: [ "movies", "tv" ]
             - type: tautulli
-              url: "{{HOMEPAGE_VAR_TAUTULLI_URL}}"
+              url: http://ts-tautulli:8181
               key: "{{HOMEPAGE_VAR_TAUTULLI_KEY}}"
               enableUser: true # optional, defaults to false
               showEpisodeNumber: true # optional, defaults to false
