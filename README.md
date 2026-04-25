@@ -33,7 +33,7 @@ don't forget to also click the link inside the tailscale logs to reactivate tail
 some services have their own tailscale sidecar container for remote access. each sidecar extends a shared base template (`services/tailscale-sidecar.yml`) and uses a `serve-config.json` to configure routing.
 
 ## how it works
-- each sidecar gets its own hostname on the tailnet (e.g., `komga.tail17ddbe.ts.net`)
+- each sidecar gets its own hostname on the tailnet (e.g., `komga.<your-tailnet>.ts.net`)
 - the service shares the sidecar's network namespace via `network_mode: service:<sidecar>`
 - tailscale serve proxies HTTPS on port 443 to the service's internal port
 - setting `AllowFunnel` to `true` in the serve config makes the service publicly accessible
@@ -41,8 +41,8 @@ some services have their own tailscale sidecar container for remote access. each
 ## current funneled services
 | service | url | serve config |
 |---------|-----|-------------|
-| komga | `https://komga.tail17ddbe.ts.net` | `services/comics/ts-komga-config/serve-config.json` |
-| calibre-web-automated | `https://calibre.tail17ddbe.ts.net` | `services/books/ts-calibre-web-automated-config/serve-config.json` |
+| komga | `https://komga.<your-tailnet>.ts.net` | `services/comics/ts-komga-config/serve-config.json` |
+| calibre-web-automated | `https://calibre.<your-tailnet>.ts.net` | `services/books/ts-calibre-web-automated-config/serve-config.json` |
 
 serve configs are stored in the repo alongside their service compose files and mounted directly into the sidecar container.
 
