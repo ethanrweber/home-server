@@ -15,9 +15,8 @@ include:
   - path: ./services/radarr.yml
 
 
-  # books
-  - path: ./services/books/calibre-web-automated.yml
-  - path: ./services/books/shelfmark.yml
+  - path: ./services/calibre-web-automated/calibre-web-automated.yml
+  - path: ./services/shelfmark/shelfmark.yml
 
   # comics
   - path: ./services/comics/komga.yml
