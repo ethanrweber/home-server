@@ -19,7 +19,6 @@ services:
         condition: service_healthy
     volumes:
       - ./homepage-config:/app/config
-      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     env_file:
       - ./homepage.env
     environment:

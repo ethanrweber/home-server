@@ -2,12 +2,5 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/configs/docker/
 
-# my-docker:
-#   host: 127.0.0.1
-#   port: 2375
-
-# my-docker:
-#   socket: /var/run/docker.sock
-
-home-server:
-  socket: /var/run/docker.sock
+# Docker integration intentionally disabled: the socket is not mounted into
+# the Homepage container (see ../homepage.yml). See issue #36.
