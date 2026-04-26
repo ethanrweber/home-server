@@ -1,0 +1,23 @@
+---
+services:
+  ts-portainer:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-portainer
+    hostname: portainer
+    volumes:
+      - ${CONFIG_ROOT}/ts-portainer/state:/var/lib/tailscale
+      - ./ts-portainer-config:/config
+
+  portainer:
+    image: portainer/portainer-ce:sts
+    container_name: portainer
+    network_mode: service:ts-portainer
+    depends_on:
+      ts-portainer:
+        condition: service_healthy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${CONFIG_ROOT}/Portainer:/data
+    restart: unless-stopped

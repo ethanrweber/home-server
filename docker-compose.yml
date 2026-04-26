@@ -25,6 +25,7 @@ include:
   - path: ./services/bazarr.yml
   - path: ./services/flaresolverr.yml
 
+  - path: ./services/portainer/portainer.yml
   - path: ./services/prowlarr.yml
   - path: ./services/smokeping.yml
   - path: ./services/tautulli/tautulli.yml
