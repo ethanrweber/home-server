@@ -1,4 +1,14 @@
 services:
+  ts-sonarr:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-sonarr
+    hostname: sonarr
+    volumes:
+      - ${CONFIG_ROOT}/ts-sonarr/state:/var/lib/tailscale
+      - ./ts-sonarr-config:/config
+
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr

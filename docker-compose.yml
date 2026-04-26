@@ -11,9 +11,8 @@ include:
   - path: ./services/gluetun-qbittorrent-port-manager.yml
 
   # Services using ts-remote-access network namespace
-  - path: ./services/sonarr.yml
-  - path: ./services/radarr.yml
-
+  - path: ./services/sonarr/sonarr.yml
+  - path: ./services/radarr/radarr.yml
 
   - path: ./services/calibre-web-automated/calibre-web-automated.yml
   - path: ./services/shelfmark/shelfmark.yml

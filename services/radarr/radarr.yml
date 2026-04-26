@@ -1,4 +1,14 @@
 services:
+  ts-radarr:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-radarr
+    hostname: radarr
+    volumes:
+      - ${CONFIG_ROOT}/ts-radarr/state:/var/lib/tailscale
+      - ./ts-radarr-config:/config
+
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
