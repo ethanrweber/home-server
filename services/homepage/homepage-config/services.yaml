@@ -89,3 +89,17 @@
               env: "{{HOMEPAGE_VAR_PORTAINER_ENV}}"
               key: "{{HOMEPAGE_VAR_PORTAINER_KEY}}"
               fields: ["running", "stopped", "total"]
+
+    - qBittorrent:
+          icon: qbittorrent.png
+          href: http://192.168.1.98:8080/
+          description: qBittorrent WebUI (routed through ProtonVPN via Gluetun)
+          ping: http://gluetun:8080
+          widget:
+              type: qbittorrent
+              url: http://gluetun:8080
+              username: "{{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}"
+              password: "{{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}"
+              enableLeechProgress: true
+              enableLeechSize: true
+              fields: ["leech", "download", "seed", "upload"]
