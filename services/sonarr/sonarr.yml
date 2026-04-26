@@ -22,7 +22,7 @@ services:
       - ${MEDIA_ROOT}/tvshows:/data/tvshows
       - ${DOWNLOADS_ROOT}:/data/downloads
     restart: unless-stopped
-    network_mode: service:ts-remote-access
+    network_mode: service:ts-sonarr
     depends_on:
-      ts-remote-access:
+      ts-sonarr:
         condition: service_healthy

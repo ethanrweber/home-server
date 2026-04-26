@@ -22,7 +22,7 @@ services:
       - ${DOWNLOADS_ROOT}:/data/downloads
       - ${CONFIG_ROOT}/Radarr/Backup:/data/Backup
     restart: unless-stopped
-    network_mode: service:ts-remote-access
+    network_mode: service:ts-radarr
     depends_on:
-      ts-remote-access:
+      ts-radarr:
         condition: service_healthy
