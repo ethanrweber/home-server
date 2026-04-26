@@ -76,3 +76,16 @@
           href: https://shelfmark.{{HOMEPAGE_VAR_TS_DOMAIN}}/
           description: Shelfmark is a book downloading tool
           ping: http://ts-shelfmark:8084
+
+- Infrastructure (Tailnet Only):
+    - Portainer:
+          icon: portainer.png
+          href: https://portainer.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+          description: Portainer is a Docker management UI
+          ping: http://ts-portainer:9000
+          widget:
+              type: portainer
+              url: http://ts-portainer:9000
+              env: "{{HOMEPAGE_VAR_PORTAINER_ENV}}"
+              key: "{{HOMEPAGE_VAR_PORTAINER_KEY}}"
+              fields: ["running", "stopped", "total"]
