@@ -1,7 +1,22 @@
+---
 services:
+  ts-bazarr:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-bazarr
+    hostname: bazarr
+    volumes:
+      - ${CONFIG_ROOT}/ts-bazarr/state:/var/lib/tailscale
+      - ./ts-bazarr-config:/config
+
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
+    network_mode: service:ts-bazarr
+    depends_on:
+      ts-bazarr:
+        condition: service_healthy
     environment:
       - PUID=1000
       - PGID=1000
@@ -10,8 +25,4 @@ services:
       - ${CONFIG_ROOT}/Bazarr/Config:/config
       - ${MEDIA_ROOT}/movies:/data/movies # should match radarr movies directory
       - ${MEDIA_ROOT}/tvshows:/data/tvshows # should match sonarr tv shows directory
-    ports:
-      - 6767:6767
     restart: unless-stopped
-    networks:
-      - arrs

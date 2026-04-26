@@ -21,11 +21,11 @@ include:
   - path: ./services/comics/komga.yml
 
   # Independent services (alphabetical order)
-  - path: ./services/bazarr.yml
+  - path: ./services/bazarr/bazarr.yml
   - path: ./services/flaresolverr.yml
 
   - path: ./services/portainer/portainer.yml
-  - path: ./services/prowlarr.yml
+  - path: ./services/prowlarr/prowlarr.yml
   - path: ./services/smokeping.yml
   - path: ./services/tautulli/tautulli.yml
   # - path: ./services/tdarr.yml

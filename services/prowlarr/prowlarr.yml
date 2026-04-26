@@ -1,0 +1,28 @@
+---
+services:
+  ts-prowlarr:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-prowlarr
+    hostname: prowlarr
+    volumes:
+      - ${CONFIG_ROOT}/ts-prowlarr/state:/var/lib/tailscale
+      - ./ts-prowlarr-config:/config
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    network_mode: service:ts-prowlarr
+    depends_on:
+      ts-prowlarr:
+        condition: service_healthy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - ${CONFIG_ROOT}/Prowlarr/Config:/config
+      - ${CONFIG_ROOT}/Prowlarr/Backup:/data/Backup
+      - ${DOWNLOADS_ROOT}:/data/downloads
+    restart: unless-stopped
