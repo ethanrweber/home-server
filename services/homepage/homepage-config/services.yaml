@@ -20,12 +20,6 @@
               showEpisodeNumber: true # optional, defaults to false
               expandOneStreamToTwoRows: false # optional, defaults to true
 
-    - Tautulli:
-          icon: tautulli.png
-          href: https://tautulli.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Media Monitoring for Plex
-          ping: https://ts-tautulli:8181
-
     - Komga:
           icon: komga.png
           href: https://komga.{{HOMEPAGE_VAR_TS_DOMAIN}}/
@@ -103,3 +97,9 @@
               enableLeechProgress: true
               enableLeechSize: true
               fields: ["leech", "download", "seed", "upload"]
+
+    - Tautulli:
+          icon: tautulli.png
+          href: https://tautulli.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+          description: Media Monitoring for Plex
+          ping: https://ts-tautulli:8181
