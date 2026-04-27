@@ -4,122 +4,146 @@
 
 - Media:
     - Plex:
-          icon: plex.png
-          href: https://app.plex.tv/
-          description: Plex is a media server that organizes your personal media and streams it to your devices.
-          ping: "{{HOMEPAGE_VAR_PLEX_URL}}"
-          widgets:
-            - type: plex
-              url: "{{HOMEPAGE_VAR_PLEX_URL}}"
-              key: "{{HOMEPAGE_VAR_PLEX_TOKEN}}"
-              fields: [ "movies", "tv" ]
-            - type: tautulli
-              url: http://ts-tautulli:8181
-              key: "{{HOMEPAGE_VAR_TAUTULLI_KEY}}"
-              enableUser: true # optional, defaults to false
-              showEpisodeNumber: true # optional, defaults to false
-              expandOneStreamToTwoRows: false # optional, defaults to true
+        icon: plex.png
+        href: https://app.plex.tv/
+        description: Plex is a media server that organizes your personal media and streams it to your devices.
+        ping: "{{HOMEPAGE_VAR_PLEX_URL}}"
+        widgets:
+          - type: plex
+            url: "{{HOMEPAGE_VAR_PLEX_URL}}"
+            key: "{{HOMEPAGE_VAR_PLEX_TOKEN}}"
+            fields: ["movies", "tv"]
+          - type: tautulli
+            url: http://ts-tautulli:8181
+            key: "{{HOMEPAGE_VAR_TAUTULLI_KEY}}"
+            enableUser: true # optional, defaults to false
+            showEpisodeNumber: true # optional, defaults to false
+            expandOneStreamToTwoRows: false # optional, defaults to true
 
     - Komga:
-          icon: komga.png
-          href: https://komga.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Komga is a comics/manga server
-          ping: http://ts-komga:25600
-          widget:
-              type: komga
-              url: http://ts-komga:25600
-              username: "{{HOMEPAGE_VAR_KOMGA_USERNAME}}"
-              password: "{{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
+        icon: komga.png
+        href: https://komga.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Komga is a comics/manga server
+        ping: http://ts-komga:25600
+        widget:
+          type: komga
+          url: http://ts-komga:25600
+          username: "{{HOMEPAGE_VAR_KOMGA_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
 
     - Calibre-Web-Automated:
-          icon: calibre-web.png
-          href: https://calibre.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Calibre-Web-Automated is a web-based e-book library manager
-          ping: http://ts-calibre-web-automated:8083
-          widget:
-              type: calibreweb
-              url: http://ts-calibre-web-automated:8083
-              username: "{{HOMEPAGE_VAR_CALIBRE_USERNAME}}"
-              password: "{{HOMEPAGE_VAR_CALIBRE_PASSWORD}}"
+        icon: calibre-web.png
+        href: https://calibre.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Calibre-Web-Automated is a web-based e-book library manager
+        ping: http://ts-calibre-web-automated:8083
+        widget:
+          type: calibreweb
+          url: http://ts-calibre-web-automated:8083
+          username: "{{HOMEPAGE_VAR_CALIBRE_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_CALIBRE_PASSWORD}}"
+
+- Release Calendar:
+    - Calendar:
+        href: https://app.plex.tv
+        widget:
+          type: calendar
+          firstDayInWeek: monday
+          view: monthly
+          maxEvents: 10
+          showTime: true
+          timezone: America/Chicago
+          integrations:
+            - type: sonarr
+              service_group: Media Automation (Tailnet Only)
+              service_name: Sonarr
+              color: green
+              params:
+                unmonitored: false
+            - type: radarr
+              service_group: Media Automation (Tailnet Only)
+              service_name: Radarr
+              color: blue
+              params:
+                unmonitored: false
 
 - Media Automation (Tailnet Only):
     - Prowlarr:
-          icon: prowlarr.png
-          href: https://prowlarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Prowlarr is an indexer manager for *arr applications
-          ping: http://ts-prowlarr:9696
-          widget:
-              type: prowlarr
-              url: http://ts-prowlarr:9696
-              key: "{{HOMEPAGE_VAR_PROWLARR_KEY}}"
+        icon: prowlarr.png
+        href: https://prowlarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Prowlarr is an indexer manager for *arr applications
+        ping: http://ts-prowlarr:9696
+        widget:
+          type: prowlarr
+          url: http://ts-prowlarr:9696
+          key: "{{HOMEPAGE_VAR_PROWLARR_KEY}}"
 
     - Sonarr:
-          icon: sonarr.png
-          href: https://sonarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Sonarr is a TV series management tool that automates the process of finding, downloading, and organizing TV shows.
-          ping: http://ts-sonarr:8989
-          widget:
-              type: sonarr
-              url: http://ts-sonarr:8989
-              key: "{{HOMEPAGE_VAR_SONARR_KEY}}"
-              enableQueue: true # optional, defaults to false
+        icon: sonarr.png
+        href: https://sonarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Sonarr is a TV series management tool that automates the process of finding, downloading, and organizing TV shows.
+        ping: http://ts-sonarr:8989
+        widget:
+          type: sonarr
+          url: http://ts-sonarr:8989
+          key: "{{HOMEPAGE_VAR_SONARR_KEY}}"
+          enableQueue: true # optional, defaults to false
 
     - Radarr:
-          icon: radarr.png
-          href: https://radarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Radarr is a movie management tool that automates the process of finding, downloading, and organizing movies.
-          ping: http://ts-radarr:7878
-          widget:
-              type: radarr
-              url: http://ts-radarr:7878
-              key: "{{HOMEPAGE_VAR_RADARR_KEY}}"
-              enableQueue: true # optional, defaults to false
+        icon: radarr.png
+        href: https://radarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Radarr is a movie management tool that automates the process of finding, downloading, and organizing movies.
+        ping: http://ts-radarr:7878
+        widget:
+          type: radarr
+          url: http://ts-radarr:7878
+          key: "{{HOMEPAGE_VAR_RADARR_KEY}}"
+          enableQueue: true # optional, defaults to false
 
     - Bazarr:
-          icon: bazarr.png
-          href: https://bazarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Bazarr manages and downloads subtitles for media managed by Sonarr and Radarr
-          ping: http://ts-bazarr:6767
-          widget:
-              type: bazarr
-              url: http://ts-bazarr:6767
-              key: "{{HOMEPAGE_VAR_BAZARR_KEY}}"
+        icon: bazarr.png
+        href: https://bazarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Bazarr manages and downloads subtitles for media managed by Sonarr and Radarr
+        ping: http://ts-bazarr:6767
+        widget:
+          type: bazarr
+          url: http://ts-bazarr:6767
+          key: "{{HOMEPAGE_VAR_BAZARR_KEY}}"
 
     - Shelfmark:
-          icon: shelfmark.png
-          href: https://shelfmark.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Shelfmark is a book downloading tool
-          ping: http://ts-shelfmark:8084
+        icon: shelfmark.png
+        href: https://shelfmark.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Shelfmark is a book downloading tool
+        ping: http://ts-shelfmark:8084
 
 - Infrastructure (Tailnet Only):
     - Portainer:
-          icon: portainer.png
-          href: https://portainer.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Portainer is a Docker management UI
-          ping: http://ts-portainer:9000
-          widget:
-              type: portainer
-              url: http://ts-portainer:9000
-              env: "{{HOMEPAGE_VAR_PORTAINER_ENV}}"
-              key: "{{HOMEPAGE_VAR_PORTAINER_KEY}}"
-              fields: ["running", "stopped", "total"]
+        icon: portainer.png
+        href: https://portainer.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Portainer is a Docker management UI
+        ping: http://ts-portainer:9000
+        widget:
+          type: portainer
+          url: http://ts-portainer:9000
+          env: "{{HOMEPAGE_VAR_PORTAINER_ENV}}"
+          key: "{{HOMEPAGE_VAR_PORTAINER_KEY}}"
+          fields: ["running", "stopped", "total"]
 
     - qBittorrent:
-          icon: qbittorrent.png
-          href: http://192.168.1.98:8080/
-          description: qBittorrent WebUI (routed through ProtonVPN via Gluetun)
-          ping: http://gluetun:8080
-          widget:
-              type: qbittorrent
-              url: http://gluetun:8080
-              username: "{{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}"
-              password: "{{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}"
-              enableLeechProgress: true
-              enableLeechSize: true
-              fields: ["leech", "download", "seed", "upload"]
+        icon: qbittorrent.png
+        href: http://192.168.1.98:8080/
+        description: qBittorrent WebUI (routed through ProtonVPN via Gluetun)
+        ping: http://gluetun:8080
+        widget:
+          type: qbittorrent
+          url: http://gluetun:8080
+          username: "{{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}"
+          enableLeechProgress: true
+          enableLeechSize: true
+          fields: ["leech", "download", "seed", "upload"]
 
     - Tautulli:
-          icon: tautulli.png
-          href: https://tautulli.{{HOMEPAGE_VAR_TS_DOMAIN}}/
-          description: Media Monitoring for Plex
-          ping: https://ts-tautulli:8181
+        icon: tautulli.png
+        href: https://tautulli.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+        description: Media Monitoring for Plex
+        ping: https://ts-tautulli:8181
