@@ -43,6 +43,16 @@
               password: "{{HOMEPAGE_VAR_CALIBRE_PASSWORD}}"
 
 - Media Automation (Tailnet Only):
+    - Prowlarr:
+          icon: prowlarr.png
+          href: https://prowlarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+          description: Prowlarr is an indexer manager for *arr applications
+          ping: http://ts-prowlarr:9696
+          widget:
+              type: prowlarr
+              url: http://ts-prowlarr:9696
+              key: "{{HOMEPAGE_VAR_PROWLARR_KEY}}"
+
     - Sonarr:
           icon: sonarr.png
           href: https://sonarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
@@ -64,6 +74,16 @@
               url: http://ts-radarr:7878
               key: "{{HOMEPAGE_VAR_RADARR_KEY}}"
               enableQueue: true # optional, defaults to false
+
+    - Bazarr:
+          icon: bazarr.png
+          href: https://bazarr.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+          description: Bazarr manages and downloads subtitles for media managed by Sonarr and Radarr
+          ping: http://ts-bazarr:6767
+          widget:
+              type: bazarr
+              url: http://ts-bazarr:6767
+              key: "{{HOMEPAGE_VAR_BAZARR_KEY}}"
 
     - Shelfmark:
           icon: shelfmark.png
