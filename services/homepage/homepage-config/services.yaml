@@ -44,7 +44,6 @@
 
 - Release Calendar:
     - Calendar:
-        href: https://app.plex.tv
         widget:
           type: calendar
           firstDayInWeek: monday
