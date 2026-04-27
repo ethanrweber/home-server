@@ -18,12 +18,3 @@ include:
   - path: ./services/sonarr/sonarr.yml
   - path: ./services/tautulli/tautulli.yml
   # - path: ./services/tdarr.yml
-
-# Shared network definitions
-networks:
-  arrs:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 173.25.0.0/16
-          gateway: 173.25.0.1
