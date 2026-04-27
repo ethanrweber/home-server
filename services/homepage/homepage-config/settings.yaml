@@ -5,3 +5,25 @@
 providers:
   openweathermap: openweathermapapikey
   weatherapi: weatherapiapikey
+
+layout:
+  Top Row:
+    style: row
+    columns: 2
+    header: false
+    Media:
+      style: column
+      icon: mdi-multimedia
+    Release Calendar:
+      style: column
+      icon: mdi-calendar
+  Bottom Row:
+    style: row
+    columns: 2
+    header: false
+    Media Automation (Tailnet Only):
+      style: column
+      icon: mdi-expansion-card
+    Infrastructure (Tailnet Only):
+      style: column
+      icon: mdi-server
