@@ -4,13 +4,11 @@
 include:
   # VPN and network infrastructure (load first - dependencies)
   - path: ./services/gluetun.yml
-  - path: ./services/ts-remote-access.yml
 
   # Services using gluetun network namespace
   - path: ./services/qbittorrent.yml
   - path: ./services/gluetun-qbittorrent-port-manager.yml
 
-  # Services using ts-remote-access network namespace
   - path: ./services/sonarr/sonarr.yml
   - path: ./services/radarr/radarr.yml
 
