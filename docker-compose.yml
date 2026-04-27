@@ -2,34 +2,22 @@
 # To disable a service: comment out its include line
 
 include:
-  # VPN and network infrastructure (load first - dependencies)
-  - path: ./services/gluetun.yml
-
-  # Services using gluetun network namespace
-  - path: ./services/qbittorrent.yml
-  - path: ./services/gluetun-qbittorrent-port-manager.yml
-
-  - path: ./services/sonarr/sonarr.yml
-  - path: ./services/radarr/radarr.yml
-
-  - path: ./services/calibre-web-automated/calibre-web-automated.yml
-  - path: ./services/shelfmark/shelfmark.yml
-
-  # comics
-  - path: ./services/comics/komga.yml
-
-  # Independent services (alphabetical order)
   - path: ./services/bazarr/bazarr.yml
+  - path: ./services/calibre-web-automated/calibre-web-automated.yml
+  - path: ./services/comics/komga.yml
   - path: ./services/flaresolverr.yml
-
+  - path: ./services/gluetun-qbittorrent-port-manager.yml
+  - path: ./services/gluetun.yml
+  - path: ./services/homepage/homepage.yml
   - path: ./services/portainer/portainer.yml
   - path: ./services/prowlarr/prowlarr.yml
+  - path: ./services/qbittorrent.yml
+  - path: ./services/radarr/radarr.yml
+  - path: ./services/shelfmark/shelfmark.yml
   - path: ./services/smokeping.yml
+  - path: ./services/sonarr/sonarr.yml
   - path: ./services/tautulli/tautulli.yml
   # - path: ./services/tdarr.yml
-
-  # Homepage
-  - path: ./services/homepage/homepage.yml
 
 # Shared network definitions
 networks:
