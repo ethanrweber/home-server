@@ -3,10 +3,11 @@
 # https://gethomepage.dev/configs/info-widgets/
 
 - resources:
+    label: "System"
     cpu: true
     memory: true
     disk: /
 
-- search:
-    provider: duckduckgo
-    target: _blank
+- resources:
+    label: "Media"
+    disk: /media
