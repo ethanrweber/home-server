@@ -7,23 +7,33 @@ providers:
   weatherapi: weatherapiapikey
 
 layout:
-  Top Row:
+  home-row-1:
     style: row
     columns: 2
     header: false
+    tab: Home
     Media:
       style: column
       icon: mdi-multimedia
     Release Calendar:
       style: column
       icon: mdi-calendar
-  Bottom Row:
+  home-row-2:
     style: row
     columns: 2
     header: false
+    tab: Home
     Media Automation (Tailnet Only):
       style: column
       icon: mdi-expansion-card
     Infrastructure (Tailnet Only):
+      style: column
+      icon: mdi-server
+  system-row-1:
+    style: row
+    columns: 1
+    header: false
+    tab: System
+    pve-1:
       style: column
       icon: mdi-server

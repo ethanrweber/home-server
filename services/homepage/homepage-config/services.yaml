@@ -2,7 +2,7 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/configs/services/
 
-- Top Row:
+- home-row-1:
     - Media:
         - Plex:
             icon: plex.png
@@ -66,7 +66,7 @@
                   params:
                     unmonitored: false
 
-- Bottom Row:
+- home-row-2:
     - Media Automation (Tailnet Only):
         - Prowlarr:
             icon: prowlarr.png
@@ -148,3 +148,12 @@
             href: https://tautulli.{{HOMEPAGE_VAR_TS_DOMAIN}}/
             description: Media Monitoring for Plex
             ping: https://ts-tautulli:8181
+
+- system-row-1:
+    - pve-1:
+        widget:
+          type: proxmox
+          url: https://192.168.1.205:8006
+          username: "{{HOMEPAGE_VAR_PROXMOX_API_TOKEN_USER}}"
+          password: "{{HOMEPAGE_VAR_PROXMOX_API_TOKEN_SECRET}}"
+          node: pve-1
