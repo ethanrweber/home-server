@@ -33,3 +33,9 @@ Off the top of my head, these questions seem relevant to investigate before deci
 - "which containers have updates available?"
 - "is it safe to apply the updates?" -- not sure if that can be automated, probably requires manual investigation
   - maybe it would be more pertinent to ask "can I see what was changed before applying an update?"
+
+## Media Requesting
+
+The main purpose of my docker compose stack currently is to automate media discovery and media collection for my plex server. I have a few friends and family members who use my plex server to watch shows and movies. If they want a new piece of media on my server, they have to reach out to me directly to ask for it.
+
+I should investigate the `Seerr` service (previously `OverSeerr` / `JellySeerr`) and decide if it would be worth including in my docker compose stack. I've previously used Overseerr, but it wasn't worth it at the time because I was the only one who was using my plex server. Thus I'm already aware of Seerr's capabilities, but I should investigate more and see how to safely expose it as a public service.
