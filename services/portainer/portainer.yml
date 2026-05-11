@@ -11,7 +11,7 @@ services:
       - ./ts-portainer-config:/config
 
   portainer:
-    image: portainer/portainer-ce:sts
+    image: portainer/portainer-ce:lts
     container_name: portainer
     network_mode: service:ts-portainer
     depends_on:
