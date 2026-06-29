@@ -37,3 +37,11 @@ layout:
     pve-1:
       style: column
       icon: mdi-server
+  system-row-2:
+    style: row
+    columns: 1
+    header: false
+    tab: System
+    Storage:
+      style: column
+      icon: mdi-harddisk

@@ -157,3 +157,15 @@
           username: "{{HOMEPAGE_VAR_PROXMOX_API_TOKEN_USER}}"
           password: "{{HOMEPAGE_VAR_PROXMOX_API_TOKEN_SECRET}}"
           node: pve-1
+
+- system-row-2:
+    - Storage:
+        - SnapRAID Sync:
+            icon: mdi-harddisk
+            href: https://healthchecks.io/
+            description: Daily SnapRAID parity sync on the Proxmox host (pve-1)
+            widgets:
+              - type: healthchecks
+                url: https://healthchecks.io
+                key: "{{HOMEPAGE_VAR_HEALTHCHECKS_KEY}}"
+                uuid: "{{HOMEPAGE_VAR_HEALTHCHECKS_UUID}}" # single-check: status + last_ping
