@@ -47,7 +47,7 @@ some services have their own tailscale sidecar container for remote access. each
 serve configs are stored in the repo alongside their service compose files and mounted directly into the sidecar container.
 
 ## adding a new service with a tailscale sidecar
-1. create a state directory: `%CONFIG_ROOT%\ts-<service>\state`
+1. create a state directory: `${CONFIG_ROOT}/ts-<service>/state`
 2. create a `ts-<service>-config/serve-config.json` next to the service's compose file (copy from an existing one and update the port)
 3. add a sidecar to the service's compose file using `extends`:
    ```yaml
@@ -69,5 +69,5 @@ serve configs are stored in the repo alongside their service compose files and m
 to see which ports are in use across all services:
 
 ```
-& "C:\Program Files\Git\bin\bash.exe" scripts/list-ports.sh
+bash scripts/list-ports.sh
 ```
