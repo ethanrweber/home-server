@@ -64,10 +64,30 @@ serve configs are stored in the repo alongside their service compose files and m
 4. set the service's `network_mode: service:ts-myservice` and add a `depends_on` with `condition: service_healthy`
 5. enable the `funnel` node attribute in the [tailscale ACL policy](https://login.tailscale.com/admin/acls) if not already done (only needs to be done once for your tailscale account, _not_ once per service)
 
-# listing ports
+# scripts
+
+## listing ports
 
 to see which ports are in use across all services:
 
 ```
 bash scripts/list-ports.sh
 ```
+
+## season audit
+
+read-only report of sonarr seasons that were downloaded episode-by-episode (mixed release groups, codecs, qualities, import dates spread over weeks) and are good candidates for replacing with a season pack via an interactive season search:
+
+```
+bash scripts/season-audit.sh
+```
+
+the wrapper resolves the ts-sonarr container ip and reads the sonarr api key from `${CONFIG_ROOT}/Sonarr/Config/config.xml`, so no configuration is needed. arguments pass through to the underlying python script:
+
+```
+bash scripts/season-audit.sh --min-score 20   # only the worst offenders
+bash scripts/season-audit.sh --json           # full detail (groups, codecs, audio) as json
+bash scripts/season-audit.sh --all            # include seasons that look like packs
+```
+
+the `MultiAud` column counts files with 2+ audio languages — useful for spotting anime seasons missing dual audio. seasons with missing episodes, specials, unmonitored seasons, and currently-airing seasons are excluded.
