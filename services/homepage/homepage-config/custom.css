@@ -1,3 +1,11 @@
 .service[data-name="pve-1"] .service-name {
   text-align: center;
 }
+
+/* size the latency-graph iframe to the PNG's natural 697x310 so the
+   flex service-block centers it instead of stretching it full-width */
+.service[data-name="Smokeping"] iframe {
+  width: 697px;
+  max-width: 100%;
+  height: 310px;
+}
