@@ -1,0 +1,28 @@
+services:
+  ts-smokeping:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-smokeping
+    hostname: smokeping
+    volumes:
+      - ${CONFIG_ROOT}/ts-smokeping/state:/var/lib/tailscale
+      - ./ts-smokeping-config:/config
+    ports:
+      - 8085:80 # keep LAN access alongside the tailnet hostname
+
+  smokeping:
+    image: lscr.io/linuxserver/smokeping:latest
+    container_name: smokeping
+    network_mode: service:ts-smokeping
+    depends_on:
+      ts-smokeping:
+        condition: service_healthy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${CONFIG_ROOT}/SmokePing/config:/config
+      - ${CONFIG_ROOT}/SmokePing/data:/data
+    restart: unless-stopped

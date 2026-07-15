@@ -149,6 +149,21 @@
             description: Media Monitoring for Plex
             ping: https://ts-tautulli:8181
 
+        - Smokeping:
+            icon: smokeping.png
+            # NOTE: use & (not smokeping's usual ;) as the query separator — tailscale
+            # serve's Go reverse proxy strips semicolon-separated query params entirely
+            href: https://smokeping.{{HOMEPAGE_VAR_TS_DOMAIN}}/smokeping/?displaymode=n&start=-3h&end=now&target=InternetSites.GoogleSearch
+            description: Smokeping graphs network latency over time
+            ping: http://ts-smokeping:80
+            widget:
+              type: iframe
+              name: smokeping-latency
+              src: https://smokeping.{{HOMEPAGE_VAR_TS_DOMAIN}}/smokeping/?displaymode=a&start=-3h&end=now&target=InternetSites.GoogleSearch
+              classes: h-48 w-full
+              allowScrolling: no
+              refreshInterval: 300000
+
 - system-row-1:
     - pve-1:
         widget:

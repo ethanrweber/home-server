@@ -14,7 +14,7 @@ include:
   - path: ./services/qbittorrent.yml
   - path: ./services/radarr/radarr.yml
   - path: ./services/shelfmark/shelfmark.yml
-  - path: ./services/smokeping.yml
+  - path: ./services/smokeping/smokeping.yml
   - path: ./services/sonarr/sonarr.yml
   - path: ./services/tautulli/tautulli.yml
   # - path: ./services/tdarr.yml
