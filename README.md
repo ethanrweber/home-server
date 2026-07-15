@@ -64,6 +64,20 @@ serve configs are stored in the repo alongside their service compose files and m
 4. set the service's `network_mode: service:ts-myservice` and add a `depends_on` with `condition: service_healthy`
 5. enable the `funnel` node attribute in the [tailscale ACL policy](https://login.tailscale.com/admin/acls) if not already done (only needs to be done once for your tailscale account, _not_ once per service)
 
+## gotchas
+
+- `TS_AUTHKEY` in `.env` is only read the first time a sidecar registers; existing sidecars auth from their state dirs. tailscale auth keys expire (90 days max), so mint a fresh reusable key at https://login.tailscale.com/admin/settings/keys before adding a new sidecar.
+- tailscale serve's go reverse proxy silently drops semicolon-separated query params. old cgi apps like smokeping use `;` as a query separator — use `&` instead in any url that goes through a sidecar (smokeping accepts both).
+
+# smokeping targets
+
+the smokeping target list lives in the repo at `services/smokeping/smokeping-config/Targets` and is bind-mounted over the copy in `${CONFIG_ROOT}`. to change what gets probed:
+
+1. edit `services/smokeping/smokeping-config/Targets`
+2. `docker compose restart smokeping`
+
+removing a target leaves its `.rrd` data file behind in `${CONFIG_ROOT}/SmokePing/data/` (harmless); re-adding a target at the same path resumes its history.
+
 # scripts
 
 ## listing ports

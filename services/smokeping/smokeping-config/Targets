@@ -4,49 +4,129 @@ probe = FPing
 
 menu = Top
 title = Network Latency
-remark = Latency in layers: LAN, ISP, Internet, DNS. \
-         When something feels slow, read top-down — the first layer \
-         with a smoky graph is where the problem starts.
-
-+ LAN
-
-menu = LAN
-title = Local Network
-
-++ Router
-menu = Router
-title = Router / Gateway (192.168.1.1)
-host = 192.168.1.1
-
-++ pve1
-menu = pve-1
-title = Proxmox host pve-1 (192.168.1.205)
-host = 192.168.1.205
-
-++ Plex
-menu = Plex
-title = Plex LXC (192.168.1.176)
-host = 192.168.1.176
-
-+ ISP
-
-menu = ISP
-title = ISP
-
-++ FirstHop
-menu = First Hop
-title = ISP first hop past the router (72.8.112.2)
-host = 72.8.112.2
+remark = Stock target set plus custom layers (LAN, ISP, router DNS) \
+         appended at the end — trim what you don't need.
 
 + InternetSites
 
-menu = Internet
+menu = Internet Sites
 title = Internet Sites
 
+++ Facebook
+menu = Facebook
+title = Facebook
+host = facebook.com
+
+++ Youtube
+menu = YouTube
+title = YouTube
+host = youtube.com
+
+++ JupiterBroadcasting
+menu = JupiterBroadcasting
+title = JupiterBroadcasting
+host = jupiterbroadcasting.com
+
 ++ GoogleSearch
-menu = google.com
+menu = Google
 title = google.com
 host = google.com
+
+++ GoogleSearchIpv6
+menu = Google
+probe = FPing6
+title = ipv6.google.com
+host = ipv6.google.com
+
+++ linuxserverio
+menu = linuxserver.io
+title = linuxserver.io
+host = linuxserver.io
+
++ Europe
+
+menu = Europe
+title = European Connectivity
+
+++ Germany
+
+menu = Germany
+title = The Fatherland
+
++++ TelefonicaDE
+
+menu = Telefonica DE
+title = Telefonica DE
+host = www.telefonica.de
+
+++ Switzerland
+
+menu = Switzerland
+title = Switzerland
+
++++ CernIXP
+
+menu = CernIXP
+title = Cern Internet eXchange Point
+host = cixp.web.cern.ch
+
++++ SBB
+
+menu = SBB
+title = SBB
+host = www.sbb.ch
+
+++ UK
+
+menu = United Kingdom
+title = United Kingdom
+
++++ CambridgeUni
+
+menu = Cambridge
+title = Cambridge
+host = cam.ac.uk
+
++++ UEA
+
+menu = UEA
+title = UEA
+host = uea.ac.uk
+
++ USA
+
+menu = North America
+title = North American Connectivity
+
+++ MIT
+
+menu = MIT
+title = Massachusetts Institute of Technology Webserver
+host = web.mit.edu
+
+++ UCB
+
+menu = U. C. Berkeley
+title = U. C. Berkeley Webserver
+host = www.berkeley.edu
+
+++ UCSD
+
+menu = U. C. San Diego
+title = U. C. San Diego Webserver
+host = ucsd.edu
+
+++ UMN
+
+menu =  University of Minnesota
+title = University of Minnesota
+host = twin-cities.umn.edu
+
+++ OSUOSL
+
+menu = Oregon State University Open Source Lab
+title = Oregon State University Open Source Lab
+host = osuosl.org
 
 + DNS
 menu = DNS
@@ -102,11 +182,6 @@ menu = DNS Probes
 title = DNS Probes
 probe = DNS
 
-++ Router
-menu = Router DNS
-title = DNS query latency via router (192.168.1.1)
-host = 192.168.1.1
-
 ++ GoogleDNS1
 menu = Google DNS 1
 title = Google DNS 8.8.8.8
@@ -151,3 +226,38 @@ host = 4.2.2.2
 menu = Quad9
 title = Quad9 DNS 9.9.9.9
 host = 9.9.9.9
+
+++ Router
+menu = Router DNS
+title = DNS query latency via router (192.168.1.1)
+host = 192.168.1.1
+
++ LAN
+
+menu = LAN
+title = Local Network
+
+++ Router
+menu = Router
+title = Router / Gateway (192.168.1.1)
+host = 192.168.1.1
+
+++ pve1
+menu = pve-1
+title = Proxmox host pve-1 (192.168.1.205)
+host = 192.168.1.205
+
+++ Plex
+menu = Plex
+title = Plex LXC (192.168.1.176)
+host = 192.168.1.176
+
++ ISP
+
+menu = ISP
+title = ISP
+
+++ FirstHop
+menu = First Hop
+title = ISP first hop past the router (72.8.112.2)
+host = 72.8.112.2
