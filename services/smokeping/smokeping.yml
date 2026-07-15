@@ -24,5 +24,6 @@ services:
       - TZ=Etc/UTC
     volumes:
       - ${CONFIG_ROOT}/SmokePing/config:/config
+      - ./smokeping-config/Targets:/config/Targets # repo-managed; shadows the CONFIG_ROOT copy
       - ${CONFIG_ROOT}/SmokePing/data:/data
     restart: unless-stopped
