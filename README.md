@@ -68,6 +68,8 @@ serve configs are stored in the repo alongside their service compose files and m
 
 - `TS_AUTHKEY` in `.env` is only read the first time a sidecar registers; existing sidecars auth from their state dirs. tailscale auth keys expire (90 days max), so mint a fresh reusable key at https://login.tailscale.com/admin/settings/keys before adding a new sidecar.
 - tailscale serve's go reverse proxy silently drops semicolon-separated query params. old cgi apps like smokeping use `;` as a query separator — use `&` instead in any url that goes through a sidecar (smokeping accepts both).
+- serve path handlers strip the mount prefix before proxying (`/smokeping/foo` reaches the backend as `/foo`). if the backend expects the prefix, repeat it in the proxy target: `"/smokeping/": {"Proxy": "http://ts-smokeping:80/smokeping/"}`.
+- a serve handler can proxy to another container over the docker network (e.g. ts-homepage proxying `/smokeping/` to `ts-smokeping:80`). this is how a tailnet-only service can be surfaced through an already-funneled host without funneling it separately — and how the homepage smokeping widget stays a relative url that works both on- and off-tailnet.
 
 # smokeping targets
 

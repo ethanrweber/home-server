@@ -152,14 +152,17 @@
         - Smokeping:
             icon: smokeping.png
             # NOTE: use & (not smokeping's usual ;) as the query separator — tailscale
-            # serve's Go reverse proxy strips semicolon-separated query params entirely
-            href: https://smokeping.{{HOMEPAGE_VAR_TS_DOMAIN}}/smokeping/?displaymode=n&start=-3h&end=now&target=ISP.FirstHop
+            # serve's Go reverse proxy strips semicolon-separated query params entirely.
+            # relative urls: smokeping is path-proxied through the homepage origin
+            # (ts-homepage serve config) so the widget also works via funnel from
+            # outside the tailnet, where smokeping's own hostname doesn't resolve.
+            href: /smokeping/?displaymode=n&start=-3h&end=now&target=ISP.FirstHop
             description: Smokeping graphs network latency over time
             ping: http://ts-smokeping:80
             widget:
               type: iframe
               name: smokeping-latency
-              src: https://smokeping.{{HOMEPAGE_VAR_TS_DOMAIN}}/smokeping/?displaymode=a&start=-3h&end=now&target=ISP.FirstHop
+              src: /smokeping/?displaymode=a&start=-3h&end=now&target=ISP.FirstHop
               allowScrolling: no
               refreshInterval: 300000
 
