@@ -20,6 +20,8 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
+      # Shelfmark's ingest dir defaults to /books (unmounted → lost); point it at the mounted CWA ingest folder below
+      INGEST_DIR: /book-ingest
     restart: unless-stopped
     volumes:
       # App configuration
