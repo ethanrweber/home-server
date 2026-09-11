@@ -191,6 +191,14 @@
               allowScrolling: no
               refreshInterval: 300000
 
+- home-row-3:
+    - Home Automation (LAN Only):
+        - Home Assistant:
+            icon: home-assistant.png
+            # runs as a HomeAssistantOS VM on pve-1, NOT a container in this stack
+            href: http://homeassistant.local/home/overview
+            description: Home automation — TV backlight, device integrations (LAN only)
+
 - system-row-1:
     - pve-1:
         widget:

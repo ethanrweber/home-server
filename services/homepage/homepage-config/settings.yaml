@@ -29,6 +29,14 @@ layout:
     Infrastructure (Tailnet Only):
       style: column
       icon: mdi-server
+  home-row-3:
+    style: row
+    columns: 1
+    header: false
+    tab: Home
+    Home Automation (LAN Only):
+      style: column
+      icon: mdi-home-automation
   system-row-1:
     style: row
     columns: 1
