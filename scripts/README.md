@@ -17,7 +17,7 @@ bash scripts/list-ports.sh
 
 ## season audit
 
-read-only report of sonarr seasons that were downloaded episode-by-episode (mixed release groups, codecs, qualities, import dates spread over weeks) and are good candidates for replacing with a season pack via an interactive season search:
+read-only report of sonarr seasons that were downloaded episode-by-episode (mixed release groups, video formats, qualities, files imported outside the season's main batch) and are good candidates for replacing with a season pack via an interactive season search:
 
 ```
 bash scripts/season-audit.sh
@@ -26,12 +26,16 @@ bash scripts/season-audit.sh
 the wrapper resolves the ts-sonarr container ip and reads the sonarr api key from `${CONFIG_ROOT}/Sonarr/Config/config.xml`, so no configuration is needed. arguments pass through to the underlying python script:
 
 ```
-bash scripts/season-audit.sh --min-score 20   # only the worst offenders
-bash scripts/season-audit.sh --json           # full detail (groups, codecs, audio) as json
+bash scripts/season-audit.sh --min-score 10   # only the worst offenders
+bash scripts/season-audit.sh --json           # full detail (groups, formats, batches, audio) as json
 bash scripts/season-audit.sh --all            # include seasons that look like packs
 ```
 
 the `MultiAud` column counts files with 2+ audio languages — useful for spotting anime seasons missing dual audio. seasons with missing episodes, specials, unmonitored seasons, and currently-airing seasons are excluded.
+
+the `Strays` column counts files that arrived outside the season's largest import batch (imports more than 24h apart start a new batch). a season pack lands as one batch, so strays are what piecemeal downloading actually looks like — unlike the raw `Span`, which a single late re-import inflates forever.
+
+`Fmts` counts distinct video *formats*, not sonarr's codec labels. sonarr reports `x265`/`h265` (and `x264`/`h264`/`AVC`) for the same format depending on the file's mkv codec tag and scene name rather than on how it was encoded, so the labels split identical encodes; the audit folds them to `hevc`/`avc` before counting.
 
 ## watch history
 

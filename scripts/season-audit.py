@@ -3,8 +3,9 @@
 
 Read-only: issues only GET requests against the Sonarr API, then ranks
 complete, finished seasons by how fragmented their files look (mixed release
-groups, codecs, qualities, and import dates spread over weeks). Use the
-output as a worklist for manual interactive season-pack searches in Sonarr.
+groups, video formats, qualities, and files imported outside the season's
+main batch). Use the output as a worklist for manual interactive season-pack
+searches in Sonarr.
 
 Usage:
   SONARR_URL=http://sonarr:8989 SONARR_API_KEY=xxx season-audit.py [options]
@@ -51,6 +52,39 @@ def parse_date(value):
         return None
 
 
+# Sonarr's videoCodec mixes encoder-library labels (x265, x264) with format
+# labels (h265, HEVC, h264, AVC). Which one a file gets depends on its mkv
+# codec tag and scene name, not on how it was encoded, so two identical
+# encodes can carry different labels. Compare the format family instead.
+CODEC_FAMILY = {
+    "x265": "hevc",
+    "h265": "hevc",
+    "hevc": "hevc",
+    "x264": "avc",
+    "h264": "avc",
+    "avc": "avc",
+}
+
+
+def codec_family(label):
+    return CODEC_FAMILY.get(label.lower(), label.lower())
+
+
+def import_batches(dates, gap_hours=24):
+    """Group import timestamps into batches; a gap this long starts a new one.
+
+    A season pack lands as one batch. Piecemeal downloads land as many. This
+    is robust to a single late re-import, which a min-to-max span is not.
+    """
+    batches = []
+    for date in sorted(dates):
+        if batches and (date - batches[-1][-1]).total_seconds() <= gap_hours * 3600:
+            batches[-1].append(date)
+        else:
+            batches.append([date])
+    return batches
+
+
 def audio_langs(episode_file):
     raw = (episode_file.get("mediaInfo") or {}).get("audioLanguages") or ""
     return {lang.strip().lower() for lang in raw.split("/") if lang.strip()}
@@ -69,9 +103,16 @@ def analyze_season(files):
         for f in files
         if (f.get("mediaInfo") or {}).get("videoCodec")
     }
+    formats = {codec_family(c) for c in codecs}
 
     dates = [d for d in (parse_date(f.get("dateAdded")) for f in files) if d]
     span_days = (max(dates) - min(dates)).days if len(dates) > 1 else 0
+    batches = import_batches(dates)
+    strays = len(dates) - max((len(b) for b in batches), default=0)
+    # Take the more conservative of the raw count and the share of the season
+    # that arrived outside the main batch. The share alone over-rates a tiny
+    # season (1 of 3 files); the count alone over-rates a large one (6 of 21).
+    stray_weight = min(strays, round(strays / len(dates) * 8)) if dates else 0
 
     lang_sets = [audio_langs(f) for f in files]
     with_audio_data = [s for s in lang_sets if s]
@@ -81,14 +122,18 @@ def analyze_season(files):
     effective_groups = len(groups) + (1 if unknown_group else 0)
     score = (
         max(effective_groups - 1, 0) * 3
-        + min(span_days // 7, 8)
-        + max(len(codecs) - 1, 0) * 2
+        + stray_weight
+        + max(len(formats) - 1, 0) * 2
         + max(len(qualities) - 1, 0)
     )
 
-    if effective_groups <= 1 and span_days < 7 and len(codecs) <= 1:
+    if effective_groups <= 1 and strays == 0 and len(formats) <= 1:
         verdict = "likely pack"
-    elif effective_groups >= 3 or (effective_groups >= 2 and span_days >= 14) or span_days >= 30:
+    elif (
+        effective_groups >= 3
+        or (effective_groups >= 2 and strays >= 3)
+        or strays * 2 >= len(files)
+    ):
         verdict = "piecemeal"
     else:
         verdict = "mixed"
@@ -98,8 +143,12 @@ def analyze_season(files):
         "release_groups": sorted(groups),
         "unknown_release_group": unknown_group,
         "video_codecs": sorted(codecs),
+        "video_formats": sorted(formats),
         "qualities": sorted(qualities),
         "added_span_days": span_days,
+        "import_batches": len(batches),
+        "stray_files": strays,
+        "stray_share": round(strays / len(dates), 3) if dates else 0.0,
         "files_with_audio_data": len(with_audio_data),
         "multi_audio_files": multi_audio,
         "dual_jpn_eng_files": dual_jpn_eng,
@@ -171,7 +220,7 @@ def main():
         print("No fragmented seasons found.")
         return
 
-    header = f"{'Series':<40} {'Season':>6} {'Files':>5} {'Groups':>6} {'Codecs':>6} {'Quals':>5} {'MultiAud':>8} {'Span':>5} {'Score':>5}  Verdict"
+    header = f"{'Series':<40} {'Season':>6} {'Files':>5} {'Groups':>6} {'Fmts':>4} {'Quals':>5} {'MultiAud':>8} {'Span':>5} {'Strays':>6} {'Score':>5}  Verdict"
     print(header)
     print("-" * len(header))
     for r in results:
@@ -183,10 +232,14 @@ def main():
         )
         print(
             f"{r['series'][:40]:<40} {r['season']:>6} {r['files']:>5} {groups:>6}"
-            f" {len(r['video_codecs']):>6} {len(r['qualities']):>5} {multi:>8}"
-            f" {str(r['added_span_days']) + 'd':>5} {r['score']:>5}  {r['verdict']}"
+            f" {len(r['video_formats']):>4} {len(r['qualities']):>5} {multi:>8}"
+            f" {str(r['added_span_days']) + 'd':>5} {r['stray_files']:>6} {r['score']:>5}"
+            f"  {r['verdict']}"
         )
-    print(f"\n{len(results)} season(s) listed. 'MultiAud' = files with 2+ audio languages.")
+    print(
+        f"\n{len(results)} season(s) listed. 'MultiAud' = files with 2+ audio "
+        "languages; 'Strays' = files imported outside the season's largest batch."
+    )
 
 
 if __name__ == "__main__":
