@@ -192,12 +192,25 @@
               refreshInterval: 300000
 
 - home-row-3:
-    - Home Automation (LAN Only):
+    - Home Services (LAN Only):
         - Home Assistant:
             icon: home-assistant.png
             # runs as a HomeAssistantOS VM on pve-1, NOT a container in this stack
             href: http://homeassistant.local/home/overview
             description: Home automation — TV backlight, device integrations (LAN only)
+
+        - Technitium:
+            icon: technitium.png
+            # runs outside this stack; LAN address, not a tailnet sidecar
+            href: http://192.168.1.189:5380/
+            description: Technitium is the LAN DNS server (LAN only)
+            ping: http://192.168.1.189:5380
+            widget:
+              type: technitium
+              url: http://192.168.1.189:5380
+              key: "{{HOMEPAGE_VAR_TECHNITIUM_KEY}}"
+              range: LastDay # optional, defaults to LastHour
+              fields: ["totalQueries", "totalBlocked", "totalServerFailure", "totalClients"]
 
 - system-row-1:
     - pve-1:

@@ -34,9 +34,9 @@ layout:
     columns: 1
     header: false
     tab: Home
-    Home Automation (LAN Only):
+    Home Services (LAN Only):
       style: column
-      icon: mdi-home-automation
+      icon: mdi-home-network
   system-row-1:
     style: row
     columns: 1
