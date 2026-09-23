@@ -1,6 +1,28 @@
 # home-server
 docker compose stack for my home server: *arr media automation, torrenting behind a vpn, e-book and comic servers, plex analytics, network monitoring, a homepage dashboard, and a tailscale sidecar per service for remote access.
 
+# first deploy
+secrets and paths live in gitignored env files, so recreate them from the committed templates and fill them in:
+
+```
+cp .env.example .env
+cp services/homepage/homepage.env.example services/homepage/homepage.env
+```
+
+`homepage.env` holds the other apps' api keys, which only exist once those apps are set up, so it can wait until after the first start.
+
+create the smokeping graph directory under your `CONFIG_ROOT` before the first start ([why](#publishing-a-graph-without-publishing-the-app)):
+
+```
+mkdir -p ${CONFIG_ROOT}/Homepage/graphs && chown 1000:1000 ${CONFIG_ROOT}/Homepage/graphs
+```
+
+then:
+
+```
+docker compose up -d
+```
+
 # updating containers
 ```
 docker compose pull
@@ -8,25 +30,21 @@ docker compose up --force-recreate -d
 docker image prune -f
 ```
 
-# restarting containers
-if you've disabled a service by commenting out its include line but haven't removed the old container, `docker compose up -d` will restart only the enabled services without touching the disabled one:
-
-```
-docker compose up -d
-```
+# disabling a service
+comment out its include line in `docker-compose.yml`. `docker compose up -d` then manages only the enabled services — the disabled one's container keeps running untouched (compose warns about it as an orphan) until you remove it with `docker rm -f <container>`.
 
 # refreshing proton vpn wireguard configuration
 expires yearly, november 26th ish.
-to refresh, go to the proton vpn wireguard configuration page [here](https://account.proton.me/u/0/vpn/WireGuard). This link is also available in the docker compose file.
-click the existing configuration
-click extend to push its expiration back another year
-run:
-```
-docker compose down
-docker compose up --force-recreate -d
-```
 
-don't forget to also click the link inside the tailscale logs to reactivate tailscale!
+1. go to the [proton vpn wireguard configuration page](https://account.proton.me/u/0/vpn/WireGuard) (also linked in `.env.example`)
+2. click the existing configuration, then click extend to push its expiration back another year. if you create a new configuration instead, copy its private key into `WG_PRIVATE_KEY` in `.env` — the options to pick are listed next to it in `.env.example`
+3. recreate the vpn and the two containers that borrow its network namespace:
+
+   ```
+   docker compose up -d --force-recreate gluetun qbittorrent gluetun-qbittorrent-port-manager
+   ```
+
+   compose waits for gluetun to be healthy before starting the other two. nothing else in the stack needs to move.
 
 # tailscale serve & funnel
 
@@ -65,7 +83,8 @@ serve configs are stored in the repo alongside their service compose files and m
    ```
    the config mount is the repo directory from step 1, not a `${CONFIG_ROOT}` path — tailscale only ever reads `serve-config.json`, so `:ro` is safe. docker creates the state directory on first start; it needs no setup.
 3. set the service's `network_mode: service:ts-myservice` and add a `depends_on` with `condition: service_healthy`
-4. enable the `funnel` node attribute in the [tailscale ACL policy](https://login.tailscale.com/admin/acls) if not already done (only needs to be done once for your tailscale account, _not_ once per service) — note this grants the capability tailnet-wide, so the only thing keeping a service private is the absence of `AllowFunnel` in its serve config
+4. if the service is new, add its compose file to the `include:` list in `docker-compose.yml`
+5. enable the `funnel` node attribute in the [tailscale ACL policy](https://login.tailscale.com/admin/acls) if not already done (only needs to be done once for your tailscale account, _not_ once per service) — note this grants the capability tailnet-wide, so the only thing keeping a service private is the absence of `AllowFunnel` in its serve config
 
 ## gotchas
 
@@ -114,11 +133,7 @@ three deliberate details: the fetch writes to a temp file and renames it, so a f
 
 **anything added to the snapshot list is published to the public internet**, so its `title` in `Targets` must not contain an address — smokeping renders the title into the image. (`host` is fine; it is never drawn.) this is why `ISP.FirstHop`'s title no longer carries the hop address. the LAN targets still do, which is safe only because they aren't snapshotted.
 
-on a fresh deploy, create the output directory before first start — the snapshotter runs as `1000:1000` and cannot chown a bind mount that docker auto-creates as root:
-
-```
-mkdir -p ${CONFIG_ROOT}/Homepage/graphs && chown 1000:1000 ${CONFIG_ROOT}/Homepage/graphs
-```
+the output directory has to exist before first start (the command is in [first deploy](#first-deploy)) — the snapshotter runs as `1000:1000` and cannot chown a bind mount that docker auto-creates as root.
 
 ## the Tailnet section
 
@@ -151,7 +166,7 @@ docker compose restart ts-<svc>    # wait for healthy
 docker compose restart <svc>       # app shares the sidecar's netns, so it must follow
 ```
 
-order matters — the app is stranded until it restarts too. use `restart`, not `up -d`: a plain `up -d` leaves `ts-*` sidecars alone and would recreate only the app, missing the problem entirely.
+order matters — the app is stranded until it restarts too. use `restart`, not `up -d`: `up -d` only recreates containers whose config changed, so here it would do nothing.
 
 **ts-qbittorrent is the exception to both steps.** nothing shares its namespace, so restarting the sidecar alone is the whole fix — bouncing qbittorrent afterwards would interrupt torrents for no reason. and the app-is-innocent check has to go via the namespace owner, since nothing listens on localhost in the sidecar's netns:
 
