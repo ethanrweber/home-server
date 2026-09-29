@@ -1,0 +1,6 @@
+# the stack itself: this checkout (with the gitignored .env files), every app's config and
+# database, and the backup's own settings. the database copies are added automatically.
+# add paths for this machine only to /etc/restic/stack.local.paths, not here.
+${REPO_ROOT}
+${CONFIG_ROOT}
+/etc/restic

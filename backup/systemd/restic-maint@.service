@@ -1,0 +1,17 @@
+# Prune and check the restic repository named by the instance, when due (weekly prune and
+# check, plus a monthly read of 1/12 of the data). Started by restic-maint@<repo>.timer.
+# Logs: journalctl -u restic-maint@b2
+[Unit]
+Description=restic maintenance for %i
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/restic-backup/restic-backup maint %i
+TimeoutStartSec=12h
+Nice=10
+IOSchedulingPriority=7
+ProtectSystem=full
+PrivateTmp=yes
+NoNewPrivileges=yes

@@ -1,0 +1,15 @@
+# regenerated or disposable. every pattern must start with a path: restic applies a
+# pattern without one at any depth, which would also drop the database copies.
+${CONFIG_ROOT}/**/MediaCover
+${CONFIG_ROOT}/**/logs
+${CONFIG_ROOT}/**/cache
+${CONFIG_ROOT}/**/logs.db
+${CONFIG_ROOT}/**/logs.db-*
+# smokeping's graph snapshots are written to a temp file, then renamed
+${CONFIG_ROOT}/Homepage/graphs/.*.tmp
+# calibre-web-automated: the drop folder for new books, and zipped copies of what it has
+# imported (the books themselves are in the library, in the media set)
+${CONFIG_ROOT}/Calibre-Web-Automated/BookIngest
+${CONFIG_ROOT}/Calibre-Web-Automated/Config/processed_books
+# what restore-db moved aside: the database as it was before a restore
+${CONFIG_ROOT}/**/*.pre-restore-*

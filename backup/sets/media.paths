@@ -1,0 +1,4 @@
+# the small media libraries. the calibre library's metadata.db lives inside books, so
+# it is copied like any other database.
+${MEDIA_ROOT}/books
+${MEDIA_ROOT}/music

@@ -1,0 +1,12 @@
+# Daily maintenance check for one repository: systemctl enable --now restic-maint@b2.timer
+# The runner decides what is due, so most days it does nothing.
+[Unit]
+Description=Daily restic maintenance for %i
+
+[Timer]
+OnCalendar=*-*-* 06:00:00
+RandomizedDelaySec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

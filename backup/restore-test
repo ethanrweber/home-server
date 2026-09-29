@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""Prove the B2 backup can rebuild this machine, using only what's in Bitwarden.
+
+  sudo restore-test
+
+It asks for the repository's endpoint, bucket, key and password (type or paste them from
+Bitwarden; of /etc/restic it reads only backup.conf, for the paths to compare), restores
+the latest stack snapshot into a scratch directory with an empty cache, and compares it
+with the live machine:
+
+  - .env and homepage.env are byte-identical
+  - every sidecar's tailscaled.state is there
+  - every database copy passes PRAGMA integrity_check and has its original owner and mode
+  - Tautulli's play history has as many rows as the live one (or a few fewer, if plays
+    happened since the snapshot)
+  - /etc/restic came back, so a rebuild gets its settings back too
+
+The scratch directory holds every secret in plain text, so it is deleted at the end
+unless --keep is given.
+"""
+import argparse
+import getpass
+import json
+import os
+import shutil
+import sqlite3
+import subprocess
+import sys
+import tempfile
+import urllib.parse
+from pathlib import Path
+
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'lib'))
+from resticbackup import config  # noqa: E402
+
+
+def ask(prompt, secret=False):
+    value = (getpass.getpass if secret else input)(prompt).strip()
+    if not value:
+        sys.exit(f'{prompt.strip()} is required')
+    return value
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
+    parser.add_argument('--keep', action='store_true', help='keep the scratch directory')
+    args = parser.parse_args()
+    if os.geteuid() != 0 and not os.environ.get('RB_ALLOW_NONROOT'):
+        sys.exit('restore-test must run as root (sudo)')
+    conf = config.parse_env_file(config.ETC / 'backup.conf')
+    repo_root, host = conf['REPO_ROOT'], conf['BACKUP_HOST']
+    roots = config.read_stack_roots(repo_root)
+
+    print('values from the Bitwarden entries "B2 app key — restic" and "restic repo password — b2":')
+    endpoint = ask('endpoint (e.g. s3.us-east-005.backblazeb2.com): ')
+    bucket = ask('bucket: ')
+    key_id = ask('keyID: ')
+    app_key = ask('applicationKey: ', secret=True)
+    password = ask('repository password: ', secret=True)
+
+    scratch = Path(tempfile.mkdtemp(prefix='restore-test-', dir=os.environ.get('RB_SCRATCH', '/var/tmp')))
+    try:
+        (scratch / 'pass').write_text(password + '\n')
+        os.chmod(scratch / 'pass', 0o600)
+        # nothing restic- or credential-related comes from the caller: only what was typed
+        env = {k: v for k, v in os.environ.items() if not k.startswith(('RESTIC_', 'AWS_', 'B2_'))}
+        env.update({'RESTIC_REPOSITORY': f's3:https://{endpoint}/{bucket}',
+                    'AWS_DEFAULT_REGION': endpoint.split('.')[1] if endpoint.count('.') > 1 else '',
+                    'AWS_ACCESS_KEY_ID': key_id, 'AWS_SECRET_ACCESS_KEY': app_key,
+                    'RESTIC_PASSWORD_FILE': str(scratch / 'pass'),
+                    'RESTIC_CACHE_DIR': str(scratch / 'cache')})
+        snaps = json.loads(subprocess.run(
+            ['restic', 'snapshots', '--json', '--host', host, '--tag', 'stack', '--latest', '1'],
+            env=env, capture_output=True, text=True, check=True).stdout or '[]')
+        if not snaps:
+            sys.exit(f'no stack snapshots for host {host}')
+        snapshot = snaps[-1]['id']
+        print(f'restoring stack snapshot {snapshot[:8]} into {scratch}/restore ...')
+        subprocess.run(['restic', 'restore', snapshot, '--target', str(scratch / 'restore')], env=env, check=True)
+        return check(scratch / 'restore', repo_root, roots)
+    except subprocess.CalledProcessError as e:
+        print(f'restic failed ({e.returncode}): {e.stderr or ""}', file=sys.stderr)
+        return 1
+    finally:
+        if args.keep:
+            print(f'kept {scratch} (it holds every secret: delete it when done)')
+        else:
+            shutil.rmtree(scratch, ignore_errors=True)
+
+
+def _open(path):
+    return sqlite3.connect('file:' + urllib.parse.quote(str(path)) + '?mode=ro', uri=True)
+
+
+def check(restored, repo_root, roots):
+    results = []
+
+    def result(ok, what):
+        results.append(ok)
+        print(f"  {'ok  ' if ok else 'FAIL'} {what}")
+
+    def inside(path):
+        return restored / str(path).lstrip('/')
+
+    for name in ('.env', 'services/homepage/homepage.env'):
+        live, back = Path(repo_root) / name, inside(Path(repo_root) / name)
+        result(back.is_file() and back.read_bytes() == live.read_bytes(), f'{name} is byte-identical')
+
+    config_root = Path(roots['CONFIG_ROOT'])
+    live_states = sorted(p.relative_to(config_root) for p in config_root.glob('ts-*/state/tailscaled.state'))
+    back_states = sorted(p.relative_to(inside(config_root)) for p in inside(config_root).glob('ts-*/state/tailscaled.state'))
+    result(bool(live_states) and back_states == live_states, f'{len(back_states)} of {len(live_states)} sidecar states')
+
+    manifest = inside(config.DUMPS / 'stack' / 'manifest.json')
+    dumps = json.loads(manifest.read_text())['dumps'] if manifest.exists() else []
+    result(bool(dumps), f'{len(dumps)} database copies listed')
+    for d in dumps:
+        copy = inside(d['dump'])
+        ok = copy.is_file()
+        if ok:
+            con = _open(copy)
+            ok = con.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
+            con.close()
+            st = copy.stat()
+            ok = ok and (st.st_uid, st.st_gid, f'{st.st_mode & 0o7777:04o}') == (d['uid'], d['gid'], d['mode'])
+        result(ok, f"{d['relative']}: intact, owner and mode as the original")
+        if d['relative'].endswith('Tautulli/Config/tautulli.db') and ok:
+            live, back = _open(d['source']), _open(copy)
+            n_live = live.execute('SELECT count(*) FROM session_history').fetchone()[0]
+            n_back = back.execute('SELECT count(*) FROM session_history').fetchone()[0]
+            live.close()
+            back.close()
+            result(0 < n_back <= n_live, f'Tautulli history: {n_back} plays restored, {n_live} live')
+
+    result(inside(config.ETC / 'backup.conf').is_file(), f'{config.ETC} came back')
+    failed = results.count(False)
+    print(f'\nrestore test: {"passed" if not failed else f"{failed} check(s) failed"}')
+    return 1 if failed else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

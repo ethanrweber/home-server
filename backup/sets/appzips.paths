@@ -1,0 +1,9 @@
+# the backups the apps write themselves. compressed zips don't deduplicate, so only the
+# latest snapshot of these is kept (--keep-last 1 in sets.conf): a zip an app deletes
+# leaves the repository at the next run. the stack set's database copies cover history.
+${CONFIG_ROOT}/Sonarr/Backup
+${CONFIG_ROOT}/Radarr/Config/Backups
+${CONFIG_ROOT}/Prowlarr/Backup
+${CONFIG_ROOT}/Bazarr/Config/backup
+${CONFIG_ROOT}/Tautulli/Config/backups
+${CONFIG_ROOT}/Profilarr/Config/backups

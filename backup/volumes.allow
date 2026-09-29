@@ -1,0 +1,4 @@
+# containers allowed to keep data in a Docker volume, which no backup set can see.
+# container:path-inside-the-container   # why it's safe to lose
+flaresolverr:/config                    # regenerated on start
+gt-port-manager:/config                 # regenerated on start

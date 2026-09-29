@@ -1,0 +1,2 @@
+# what restore-db moved aside: the database as it was before a restore
+${MEDIA_ROOT}/**/*.pre-restore-*

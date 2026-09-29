@@ -1,0 +1,15 @@
+# Nightly backup to one repository: systemctl enable --now restic-backup-nightly@b2.timer
+# 04:30 local time is after the storage pool's nightly parity sync. A run missed while the
+# machine was off happens at the next boot, after a random delay so the network (and DNS)
+# can come up first.
+[Unit]
+Description=Nightly restic backup to %i
+
+[Timer]
+OnCalendar=*-*-* 04:30:00
+RandomizedDelaySec=15min
+Persistent=true
+Unit=restic-backup@%i.service
+
+[Install]
+WantedBy=timers.target

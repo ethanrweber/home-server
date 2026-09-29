@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+"""Put database copies from a restic snapshot back in place. See README.md."""
+import sys
+from pathlib import Path
+
+sys.dont_write_bytecode = True   # the install dir is read-only to the service
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'lib'))
+from resticbackup.restore import main  # noqa: E402
+
+sys.exit(main(sys.argv[1:]))

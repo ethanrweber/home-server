@@ -1,0 +1,5 @@
+# every stack snapshot must contain a non-empty file matching each of these, or the run
+# fails. they are the things a rebuild can't do without.
+${REPO_ROOT}/.env
+${REPO_ROOT}/services/homepage/homepage.env
+${CONFIG_ROOT}/ts-*/state/tailscaled.state

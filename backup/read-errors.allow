@@ -1,0 +1,3 @@
+# files restic may fail to read without failing the run (it exits 3 when any file can't be
+# read). one pattern per line, same syntax as sets/*.exclude. add entries only for errors
+# seen in a real run, with a comment saying why they're harmless.

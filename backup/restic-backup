@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+"""Back up to, maintain and inspect a restic repository. See README.md."""
+import sys
+from pathlib import Path
+
+sys.dont_write_bytecode = True   # the install dir is read-only to the service
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'lib'))
+from resticbackup.runner import main  # noqa: E402
+
+sys.exit(main(sys.argv[1:]))

@@ -1,0 +1,18 @@
+# Back up to the restic repository named by the instance: restic-backup@b2 reads
+# /etc/restic/b2.env. Started by restic-backup-nightly@<repo>.timer, or by hand with
+# `systemctl start restic-backup@b2`. Logs: journalctl -u restic-backup@b2
+[Unit]
+Description=restic backup to %i
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/restic-backup/restic-backup backup %i
+# a stalled upload shouldn't hold the backup lock forever
+TimeoutStartSec=8h
+Nice=10
+IOSchedulingPriority=7
+ProtectSystem=full
+PrivateTmp=yes
+NoNewPrivileges=yes

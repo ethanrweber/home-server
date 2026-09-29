@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+"""A stand-in for restic in the tests. It keeps "snapshots" as plain files in $FAKE_STATE.
+
+$FAKE_STATE/scenario.json can make it misbehave:
+  {"exit": {"backup:stack": 3, "unlock": 1, ...},   exit code per command or command:tag
+   "errors": [{"item": "/path", "message": "..."}],  read errors reported by backup
+   "drop": ["substring"]}                            files left out of every snapshot
+Every call is appended to $FAKE_STATE/calls.jsonl.
+"""
+import json
+import os
+import shutil
+import sys
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'lib'))
+from resticbackup.patterns import Excludes  # noqa: E402
+
+state = Path(os.environ['FAKE_STATE'])
+scenario = json.loads((state / 'scenario.json').read_text()) if (state / 'scenario.json').exists() else {}
+args = sys.argv[1:]
+command = args[0]
+with open(state / 'calls.jsonl', 'a') as log:
+    log.write(json.dumps({'args': args, 'password_file': os.environ.get('RESTIC_PASSWORD_FILE'),
+                          'cache': os.environ.get('RESTIC_CACHE_DIR')}) + '\n')
+
+
+def option(name, many=False):
+    values = [args[i + 1] for i, a in enumerate(args) if a == name]
+    return values if many else (values[0] if values else None)
+
+
+def exit_code(tag=None):
+    codes = scenario.get('exit', {})
+    return codes.get(f'{command}:{tag}', codes.get(command, 0))
+
+
+def snapshots():
+    snaps = []
+    for path in sorted((state / 'snapshots').glob('*.json')):
+        snaps.append(json.loads(path.read_text()))
+    return snaps
+
+
+def resolve(snapshot_id):
+    if snapshot_id == 'latest':
+        matching = [s for s in snapshots() if not option('--tag') or option('--tag') in s['tags']]
+        return matching[-1] if matching else None
+    for s in snapshots():
+        if s['id'].startswith(snapshot_id):
+            return s
+    return None
+
+
+if command == 'backup':
+    tag = option('--tag')
+    excludes = Excludes(option('--exclude', many=True))
+    roots = Path(option('--files-from-verbatim')).read_text().splitlines()
+    nodes = []
+    for root in roots:
+        if excludes.match(root):
+            continue
+        for dirpath, dirnames, filenames in os.walk(root):
+            dirnames[:] = [d for d in dirnames if not excludes.match(os.path.join(dirpath, d))]
+            nodes.append({'path': dirpath, 'type': 'dir', 'size': 0})
+            for name in filenames:
+                path = os.path.join(dirpath, name)
+                if excludes.match(path) or any(d in path for d in scenario.get('drop', [])):
+                    continue
+                nodes.append({'path': path, 'type': 'file', 'size': os.path.getsize(path)})
+        if os.path.isfile(root):
+            nodes.append({'path': root, 'type': 'file', 'size': os.path.getsize(root)})
+    # like restic 0.19 with --json: errors go to stderr, progress and the summary to stdout
+    for e in scenario.get('errors', []):
+        print(json.dumps({'message_type': 'error', 'error': {'message': e['message']},
+                          'during': 'archival', 'item': e['item']}), file=sys.stderr)
+    code = exit_code(tag)
+    if code not in (0, 3):
+        print(json.dumps({'message_type': 'exit_error', 'code': code, 'message': 'simulated failure'}),
+              file=sys.stderr)
+        sys.exit(code)
+    summary = {'message_type': 'summary', 'files_new': len(nodes), 'files_changed': 0,
+               'files_unmodified': 0, 'data_added': 1000, 'dry_run': '--dry-run' in args}
+    if '--dry-run' not in args:
+        snap_id = f'{len(snapshots()) + 1:08x}' + '0' * 56
+        (state / 'snapshots').mkdir(exist_ok=True)
+        files = state / 'files' / snap_id
+        for n in nodes:
+            if n['type'] == 'file':
+                (files / n['path'].lstrip('/')).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(n['path'], files / n['path'].lstrip('/'))
+        (state / 'snapshots' / f'{snap_id}.json').write_text(json.dumps(
+            {'id': snap_id, 'tags': [tag], 'hostname': option('--host'), 'paths': roots,
+             'time': time.strftime('%Y-%m-%dT%H:%M:%S.123456789-05:00'), 'nodes': nodes}))
+        summary['snapshot_id'] = snap_id
+    print(json.dumps(summary))
+    sys.exit(code)
+
+elif command == 'ls':
+    snap = resolve(args[-1])
+    print(json.dumps({'struct_type': 'snapshot', 'message_type': 'snapshot', 'id': snap['id']}))
+    for n in snap['nodes']:
+        print(json.dumps(dict(n, name=os.path.basename(n['path']), struct_type='node', message_type='node')))
+
+elif command == 'dump':
+    snap = resolve(args[-2])
+    source = state / 'files' / snap['id'] / args[-1].lstrip('/') if snap else None
+    if not source or not source.exists():
+        print(f'Fatal: cannot dump file: path "{args[-1]}" not found in snapshot', file=sys.stderr)
+        sys.exit(1)
+    sys.stdout.buffer.write(source.read_bytes())
+
+elif command == 'restore':
+    snap = resolve(args[1])
+    target = Path(option('--target'))
+    stored = state / 'files' / snap['id']
+    for f in stored.rglob('*'):
+        if f.is_file():
+            dest = target / f.relative_to(stored)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(f, dest)
+
+elif command == 'snapshots':
+    tag = option('--tag')
+    matching = [{k: v for k, v in s.items() if k != 'nodes'} for s in snapshots()
+                if not tag or tag in s['tags']]
+    print(json.dumps(matching[-1:] if '--latest' in args else matching))
+
+sys.exit(exit_code(option('--tag')))

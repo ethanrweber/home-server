@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""A stand-in for the docker CLI in the tests.
+
+$FAKE_STATE/docker.json lists containers as docker inspect would show them:
+  [{"Id": "...", "Name": "/app", "State": {"Running": true}, "Mounts": [...]}]
+stop and start are recorded in $FAKE_STATE/docker-calls.jsonl and flip State.Running.
+"""
+import json
+import os
+import sys
+from pathlib import Path
+
+state = Path(os.environ['FAKE_STATE'])
+path = state / 'docker.json'
+containers = json.loads(path.read_text()) if path.exists() else []
+args = sys.argv[1:]
+
+if args[0] == 'ps':
+    for c in containers:
+        if '-a' in args or c['State']['Running']:
+            print(c['Id'])
+elif args[0] == 'inspect':
+    print(json.dumps([c for c in containers if c['Id'] in args[1:]]))
+elif args[0] in ('stop', 'start'):
+    with open(state / 'docker-calls.jsonl', 'a') as log:
+        log.write(json.dumps(args) + '\n')
+    for c in containers:
+        if c['Name'].lstrip('/') in args[1:]:
+            c['State']['Running'] = args[0] == 'start'
+    path.write_text(json.dumps(containers))
+else:
+    sys.exit(f'fake docker: unsupported {args}')
