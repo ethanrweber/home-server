@@ -1,14 +1,15 @@
-# what restic-backup leaves out. restic fills in $CONFIG_ROOT, which backup.sh sets.
-# every line must start with a full path: restic applies a pattern without one anywhere.
+# paths that restic-backup excludes. restic expands $CONFIG_ROOT from the environment that
+# backup.sh sets. anchor every pattern to a full path: restic matches an unanchored pattern at any
+# depth
 
-# regenerated or re-downloaded by the apps
+# artwork, logs and caches that the apps regenerate or download again
 $CONFIG_ROOT/**/MediaCover
 $CONFIG_ROOT/**/logs
 $CONFIG_ROOT/**/cache
 $CONFIG_ROOT/**/logs.db*
 
-# the apps' own backup zips. their databases are backed up directly, and zips don't
-# deduplicate, so they'd fill the b2 free tier
+# the apps' own backup zips. they are redundant, because the backup includes the databases. zips
+# do not deduplicate, so they can fill the b2 free tier
 $CONFIG_ROOT/Sonarr/Backup
 $CONFIG_ROOT/Radarr/Config/Backups
 $CONFIG_ROOT/Prowlarr/Backup
@@ -16,6 +17,6 @@ $CONFIG_ROOT/Bazarr/Config/backup
 $CONFIG_ROOT/Tautulli/Config/backups
 $CONFIG_ROOT/Profilarr/Config/backups
 
-# calibre-web-automated: the drop folder for new books, and copies of books already imported
+# calibre-web-automated: the ingest folder, and the archived copies of imported books
 $CONFIG_ROOT/Calibre-Web-Automated/BookIngest
 $CONFIG_ROOT/Calibre-Web-Automated/Config/processed_books

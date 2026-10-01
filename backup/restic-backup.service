@@ -5,11 +5,11 @@ After=network-online.target docker.service
 
 [Service]
 Type=oneshot
-# the repository, its keys and password file, the healthchecks URL, and STACK_DIR
+# the repository settings, HC_URL and STACK_DIR
 EnvironmentFile=/etc/restic/b2.env
-# root services get no $HOME, and restic needs somewhere for its cache
+# systemd sets no $HOME for system services, and restic needs a cache directory
 Environment=RESTIC_CACHE_DIR=/var/cache/restic
 ExecStart=/bin/bash ${STACK_DIR}/backup/backup.sh
-# if the backup failed or hung partway, start the stack again anyway
+# runs even if the script fails or times out, so the stack always comes back up
 ExecStopPost=/usr/bin/docker compose -f ${STACK_DIR}/docker-compose.yml start
 TimeoutStartSec=2h
