@@ -52,6 +52,7 @@ run these steps from the stack checkout.
    ```
    sudo systemctl link "$PWD/backup/restic-backup.service" "$PWD/backup/restic-backup.timer"
    ```
+   systemd runs the units from this checkout. keep the checkout at `STACK_DIR`, on a branch that contains `backup/`.
 6. run the first backup manually. it uploads a few GB, and the stack stays down until it finishes:
    ```
    sudo systemctl start --no-block restic-backup
@@ -79,6 +80,8 @@ mkdir -p /mnt/restic; restic mount /mnt/restic    # browse every snapshot as fol
 restic restore latest --target /tmp/restore --include /path/to/restore
 ```
 
+restored files can contain secrets. delete `/tmp/restore` when you are done.
+
 to roll an app back to a snapshot:
 
 1. stop the app. for example: `docker compose stop sonarr`
@@ -87,6 +90,22 @@ to roll an app back to a snapshot:
 4. start the app.
 
 restic restores file ownership and permissions. the stack was down during the backup, so the database files in each snapshot are consistent and usable as-is.
+
+to rebuild the stack on a new machine:
+
+1. install docker and restic. for restic, follow [installation](#installation) step 1.
+2. mount the media storage at the same path as before.
+3. clone this repository to the same path as before.
+4. create the settings files: installation step 2. leave `HC_URL` empty. the restore in step 6 replaces the file with the original, which includes `HC_URL`.
+5. open a root shell and load the settings, as above.
+6. restore the latest snapshot in place. this brings back the checkout with its `.env` files, all appdata, and `/etc/restic`:
+   ```
+   restic restore latest --target /
+   ```
+   if the media storage survived, add `--exclude` for the books and music folders.
+7. link the units and enable the timer: installation steps 5 and 7.
+8. make sure that the old machine does not run the stack. the sidecars on both machines use the same tailscale identities.
+9. start the stack: `docker compose up -d`. the sidecars rejoin the tailnet with their restored state. a sidecar without state needs a new `TS_AUTHKEY` in `.env`.
 
 ## change the backup
 
