@@ -54,7 +54,7 @@ run these steps from the stack checkout.
    ```
 6. run the first backup manually. it uploads a few GB, and the stack stays down until it finishes:
    ```
-   sudo systemctl start restic-backup
+   sudo systemctl start --no-block restic-backup
    journalctl -u restic-backup -f              # follow the log. ctrl+c stops it
    ```
 7. enable the timer:
