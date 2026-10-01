@@ -1,0 +1,8 @@
+[Unit]
+Description=nightly restic backup of the stack
+
+[Timer]
+OnCalendar=*-*-* 04:30:00
+
+[Install]
+WantedBy=timers.target

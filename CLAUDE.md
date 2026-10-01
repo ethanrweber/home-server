@@ -27,6 +27,10 @@ bash scripts/list-ports.sh                          # table of host/container po
 
 The read-only helper scripts under `scripts/` are documented in `scripts/README.md`.
 
+## Backups
+
+`backup/backup.sh` backs up the stack with restic to Backblaze B2 each night at 04:30, from a systemd timer (see `backup/README.md`). It stops the whole stack for a few minutes, then starts it again. The units are symlinks into this checkout, so a branch without `backup/` breaks them. The repository settings and keys are in root-only `/etc/restic`; never print them.
+
 ## VPN constraint (important)
 
 qBittorrent has no network of its own — it uses `network_mode: service:gluetun` so all torrent traffic goes through ProtonVPN. Never give qbittorrent its own ports or network; its web UI port (8080) is published on the **gluetun** container. The ProtonVPN WireGuard key expires yearly (~Nov 26); the refresh procedure is in README.md.

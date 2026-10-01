@@ -232,3 +232,12 @@
                 url: https://healthchecks.io
                 key: "{{HOMEPAGE_VAR_HEALTHCHECKS_KEY}}"
                 uuid: "{{HOMEPAGE_VAR_HEALTHCHECKS_UUID}}" # single-check: status + last_ping
+        - Restic Backup:
+            icon: mdi-backup-restore
+            href: https://healthchecks.io/
+            description: Nightly restic backup of the stack to Backblaze B2
+            widgets:
+              - type: healthchecks
+                url: https://healthchecks.io
+                key: "{{HOMEPAGE_VAR_HEALTHCHECKS_KEY}}"
+                uuid: "{{HOMEPAGE_VAR_HEALTHCHECKS_BACKUP_UUID}}"

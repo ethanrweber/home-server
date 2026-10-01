@@ -85,6 +85,7 @@ serve configs are stored in the repo alongside their service compose files and m
 3. set the service's `network_mode: service:ts-myservice` and add a `depends_on` with `condition: service_healthy`
 4. if the service is new, add its compose file to the `include:` list in `docker-compose.yml`
 5. enable the `funnel` node attribute in the [tailscale ACL policy](https://login.tailscale.com/admin/acls) if not already done (only needs to be done once for your tailscale account, _not_ once per service) — note this grants the capability tailnet-wide, so the only thing keeping a service private is the absence of `AllowFunnel` in its serve config
+6. if the service keeps data outside `${CONFIG_ROOT}`, add that path to the `restic backup` line in [backup/backup.sh](backup/backup.sh). if it writes its own backup zips, add them to [backup/excludes.txt](backup/excludes.txt).
 
 ## gotchas
 
@@ -179,6 +180,9 @@ if it's `ts-homepage` that has degraded, the dashboard carrying the graph is its
 ```
 http://<vm-ip>:8085/smokeping/?displaymode=a&start=-24h&end=now&target=Tailnet.AllFunnels
 ```
+
+# backups
+a systemd timer backs up this checkout, the appdata, and the books and music libraries to backblaze b2 with restic each night. [backup/README.md](backup/README.md) describes how it works, how to install it, and how to restore.
 
 # scripts
 
