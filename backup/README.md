@@ -7,7 +7,8 @@ every night at 04:30, `restic-backup.timer` runs [backup.sh](backup.sh). the scr
 3. starts the stack again. the stack is down for a few minutes.
 4. applies the retention policy: it forgets all snapshots except the last 7 daily, 4 weekly, and 12 monthly ones.
 5. on sundays, prunes the data that no snapshot references, then verifies a random 10% of the pack data.
-6. pings healthchecks.io.
+6. writes the size of the repository to `$CONFIG_ROOT/Homepage/backup/b2-stats.json`. the "Restic Backup" tile on homepage shows it as a percentage of the 10 GB b2 free tier.
+7. pings healthchecks.io.
 
 [excludes.txt](excludes.txt) lists the paths that the backup excludes.
 

@@ -12,3 +12,17 @@
   max-width: 100%;
   height: 310px;
 }
+
+/* show the backup status, last ping and b2 usage in one row. homepage gives
+   each widget its own row; display: contents lifts the blocks of both widgets
+   into the card, and the title takes the full width so the blocks wrap below it */
+.service[data-name="Restic Backup"] .service-card {
+  display: flex;
+  flex-wrap: wrap;
+}
+.service[data-name="Restic Backup"] .service-title {
+  flex-basis: 100%;
+}
+.service[data-name="Restic Backup"] .service-container {
+  display: contents;
+}

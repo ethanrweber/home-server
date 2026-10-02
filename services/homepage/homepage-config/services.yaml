@@ -241,3 +241,15 @@
                 url: https://healthchecks.io
                 key: "{{HOMEPAGE_VAR_HEALTHCHECKS_KEY}}"
                 uuid: "{{HOMEPAGE_VAR_HEALTHCHECKS_BACKUP_UUID}}"
+              # b2 usage. backup.sh writes `restic stats` to this file each night, and homepage
+              # serves it from its own public folder. total_size counts only the data that the
+              # snapshots reference. until the sunday prune, b2 also stores the data of forgotten
+              # snapshots, so the real usage is slightly higher
+              - type: customapi
+                url: http://localhost:3000/backup/b2-stats.json
+                refreshInterval: 3600000 # 1 hour. the file changes once a night
+                mappings:
+                  - field: total_size
+                    label: of 10 GB
+                    format: percent
+                    scale: "100/10e9" # bytes to percent of the 10 GB b2 free tier

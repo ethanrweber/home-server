@@ -12,6 +12,12 @@ CONFIG_ROOT=$(grep -m1 '^CONFIG_ROOT=' .env | cut -d= -f2-)
 MEDIA_ROOT=$(grep -m1 '^MEDIA_ROOT=' .env | cut -d= -f2-)
 export CONFIG_ROOT MEDIA_ROOT   # excludes.txt uses these values
 
+# the b2 usage widget on homepage reads this file. homepage serves only the files that exist when
+# it starts, so create the file before the stack restarts
+STATS_FILE=$CONFIG_ROOT/Homepage/backup/b2-stats.json
+mkdir -p "$(dirname "$STATS_FILE")"
+touch "$STATS_FILE"
+
 restic unlock   # remove stale locks that an interrupted run left behind
 
 # stop the stack during the backup, so that the databases stay consistent while restic reads them
@@ -27,6 +33,9 @@ if [ "$(date +%u)" = 7 ]; then
     restic prune
     restic check --read-data-subset=10%
 fi
+
+# write the size of the repository for the homepage widget, after forget and prune
+restic stats --mode raw-data --json > "$STATS_FILE"
 
 # ping healthchecks.io. set -e stops the script at the first failed command, so a failure skips
 # this ping and healthchecks.io alerts you
