@@ -29,4 +29,9 @@ services:
       - DNS_ADDRESS=10.2.0.1
       - LOG_LEVEL=info
       - HTTP_CONTROL_SERVER_AUTH_DEFAULT_ROLE={"auth":"apikey","apikey":"${GLUETUN_API_KEY}"}
+    # the image marks gluetun unhealthy ~25s after start. a dead vpn server takes longer than that to
+    # replace, and an unhealthy gluetun fails `docker compose start` for the nightly backup. the image's
+    # test command and other timings stay the same
+    healthcheck:
+      start_period: 2m
     restart: unless-stopped
