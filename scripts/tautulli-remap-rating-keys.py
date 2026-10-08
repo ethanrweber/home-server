@@ -33,7 +33,9 @@ re-added since the play) is remapped the same way, healing the split.
 
 Run scripts/tautulli-regroup-history.py first if grouped history displays the
 wrong titles; this script does not change grouping. After the remap, new plays
-group correctly against old history because both use current keys.
+group correctly against old history because both use current keys. The
+stored image paths keep the old keys; run scripts/tautulli-fix-image-paths.py
+afterwards.
 
 Reads the Plex address and token from Tautulli's config.ini. Reports what
 would change and exits without writing unless --apply is given.
@@ -460,7 +462,7 @@ def main():
     apply_changes(db_path, changes)
     notice(f"updated {len(changes)} rows across session_history, "
            f"session_history_metadata, and session_history_media_info. "
-           f"restart tautulli to pick up the change.")
+           f"run tautulli-fix-image-paths.py next, then restart tautulli.")
 
 
 if __name__ == "__main__":

@@ -3,9 +3,9 @@
 helper scripts for the stack. paths below are relative to the repo root, but
 each script resolves the repo root itself, so it can be run from anywhere.
 
-everything here is a read-only report except the two `tautulli-*.py` repair
-scripts, which can write to tautulli's database — both report and exit unless
-`--apply` is passed.
+everything here is a read-only report except the three `tautulli-*.py` repair
+scripts, which can write to tautulli's database — all three report and exit
+unless `--apply` is passed.
 
 ## listing ports
 
@@ -99,4 +99,19 @@ python3 scripts/tautulli-remap-rating-keys.py --json
 python3 scripts/tautulli-remap-rating-keys.py --apply       # write the new keys
 ```
 
-same safety rails as the regroup script: dry run by default, refuses to `--apply` while the container runs (`--force` overrides), sqlite-level backup into `backups/` first, and re-running after an apply is a no-op. needs the plex server reachable (address and token are read from tautulli's `config.ini`). stale keys also remain in `recently_added`, which tautulli only consults to dedupe notifications for newly added items — harmless, so it is left alone.
+same safety rails as the regroup script: dry run by default, refuses to `--apply` while the container runs (`--force` overrides), sqlite-level backup into `backups/` first, and re-running after an apply is a no-op. needs the plex server reachable (address and token are read from tautulli's `config.ini`). stale keys also remain in `recently_added`, which tautulli only consults to dedupe notifications for newly added items — harmless, so it is left alone. it does not change the stored image paths, so run `tautulli-fix-image-paths.py` after it.
+
+## fix poster paths after a key remap
+
+tautulli saves the image paths of each play (`thumb`, `parent_thumb`, `grandparent_thumb`, `art`) as `/library/metadata/<rating key>/...`, and its image proxy reads the rating key from the path, not from the row. the remap script changes the key columns but not these paths. after a remap, old plays show the poster of the item that now has the old key — for example, a star wars image on severance.
+
+this script changes the key in each path to the current key of the row. it reads only the database and does not contact plex:
+
+```
+python3 scripts/tautulli-fix-image-paths.py               # report what would change
+python3 scripts/tautulli-fix-image-paths.py --verbose     # list every changed path
+python3 scripts/tautulli-fix-image-paths.py --json
+python3 scripts/tautulli-fix-image-paths.py --apply       # write the new paths
+```
+
+run it after the remap script. it has the same safety rails as the other two scripts. rows that already agree with their keys do not change, so a re-run is a no-op. content that is gone from the library keeps its shifted key, so tautulli shows its placeholder poster for it.
