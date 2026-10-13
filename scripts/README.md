@@ -37,6 +37,42 @@ the `Strays` column counts files that arrived outside the season's largest impor
 
 `Fmts` counts distinct video *formats*, not sonarr's codec labels. sonarr reports `x265`/`h265` (and `x264`/`h264`/`AVC`) for the same format depending on the file's mkv codec tag and scene name rather than on how it was encoded, so the labels split identical encodes; the audit folds them to `hevc`/`avc` before counting.
 
+## movie audit
+
+read-only report of radarr movies whose file does not fit their quality profile. use it as a worklist: fix a movie in radarr, then run the audit again.
+
+```
+bash scripts/movie-audit.sh
+bash scripts/movie-audit.sh --issue banned-group   # one issue only
+bash scripts/movie-audit.sh --json                 # full detail, including all custom formats
+```
+
+the wrapper finds radarr the same way as the season audit, so no configuration is needed.
+
+each movie gets one row, for its first issue in this order:
+
+- **default profile** (`default-profile`): the movie is on a radarr built-in profile (Any, HD-1080p, ...). the detail gives the profilarr profile for the file.
+- **wrong profile** (`wrong-profile`): the profile does not allow the file's quality, for example a 2160p file on 1080p Compact.
+- **banned group** (`banned-group`): the release group is on a profilarr ban list (YTS, YIFY, FGT, ...).
+- **excluded format** (`excluded-format`): the profile rejects a format of the file, for example HDR or lossless audio on 1080p Compact, or HEVC on 1080p Remux.
+- **language** (`language`): the file trips "Not Original or English". if radarr has the language as Unknown, it is a false positive. set the language in radarr's manage files.
+- **no release group** (`no-group`): radarr has no release group for the file, and the profile rejects that.
+- **no tier match** (`no-tier`): the file has no rejected format, but no tier format of the profile matches it. radarr shows no warning for these files.
+
+every issue from banned group down means that the file's custom-format score is below the profile's minimum (200,000 on every profilarr profile). radarr does not grab a release with that score, so it rejects the same release if it appears again.
+
+the profile rules for a file are:
+
+- a 1080p or 720p encode, or a 1080p web release, goes to 1080p Compact.
+- a 1080p remux goes to 1080p Remux.
+- a 2160p encode or web release goes to 2160p Efficient.
+- a 2160p remux goes to 2160p Remux.
+- below 720p, there is no rule. choose a profile manually.
+
+the audit reads the resolution from the file's media info, not from the quality label, because some labels are wrong. a 1080p `Remux-1080p` file in HEVC gets the note "re-encoded, not a real remux": 1080p blu-rays are never HEVC, so the file was re-encoded after download.
+
+to accept a movie as it is, add the radarr tag `audit-ok` to it. the audit skips tagged movies and shows how many it skipped.
+
 ## watch history
 
 tautulli's web ui lists individual plays but can't group them, so this rolls episode plays up per series:
