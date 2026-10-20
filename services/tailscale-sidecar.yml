@@ -6,9 +6,7 @@ services:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_SERVE_CONFIG=/config/serve-config.json
       - TS_ENABLE_HEALTH_CHECK=true
-    cap_add:
-      - net_admin
-      - sys_module
+    # no cap_add: tailscaled runs in userspace mode (no /dev/net/tun), which needs no extra capabilities
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:9002/healthz"]
       interval: 30s

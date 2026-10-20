@@ -9,6 +9,11 @@ services:
     volumes:
       - ${CONFIG_ROOT}/ts-homepage/state:/var/lib/tailscale
       - ./ts-homepage-config:/config
+    networks:
+      - default
+      # each funneled service's own network, so homepage's widgets can reach them
+      - public-komga
+      - public-calibre-web-automated
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
@@ -30,3 +35,8 @@ services:
       - PUID=1000
       - PGID=1000
     restart: unless-stopped
+
+# also declared in komga.yml and calibre-web-automated.yml, so each file stays valid when another's include is commented out
+networks:
+  public-komga:
+  public-calibre-web-automated:
