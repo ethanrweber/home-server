@@ -21,7 +21,7 @@ services:
       - TZ=America/Chicago
     volumes:
       - ${CONFIG_ROOT}/Komga/Config:/config
-      - ${MEDIA_ROOT}/comics:/data/comics
-      - ${MEDIA_ROOT}/books:/data/books
+      - ${MEDIA_ROOT}/comics:/data/comics:ro # read-only: komga is publicly funneled and only reads the library
+      - ${MEDIA_ROOT}/books:/data/books:ro
     user: "1000:1000"
     restart: unless-stopped
