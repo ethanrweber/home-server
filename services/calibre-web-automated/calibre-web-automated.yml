@@ -9,6 +9,8 @@ services:
     volumes:
       - ${CONFIG_ROOT}/ts-calibre-web-automated/state:/var/lib/tailscale
       - ./ts-calibre-web-automated-config:/config
+    networks:
+      - public-calibre-web-automated # funneled: own network, so cwa can't reach the rest of the stack (ts-homepage joins it for widgets)
 
   calibre-web-automated:
     image: crocodilestick/calibre-web-automated:latest
@@ -35,3 +37,6 @@ services:
       # If you are starting with a fresh install, you also need to copy customize.py.json to the Calibre config volume above, in /path/to/config/folder/.config/calibre/customize.py.json, see the README for more info
       - ${CONFIG_ROOT}/Calibre-Web-Automated/Plugins:/config/.config/calibre/plugins
     restart: unless-stopped
+
+networks:
+  public-calibre-web-automated:

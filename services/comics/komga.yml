@@ -9,6 +9,8 @@ services:
     volumes:
       - ${CONFIG_ROOT}/ts-komga/state:/var/lib/tailscale
       - ./ts-komga-config:/config
+    networks:
+      - public-komga # funneled: own network, so komga can't reach the rest of the stack (ts-homepage joins it for widgets)
 
   komga:
     image: gotson/komga
@@ -25,3 +27,6 @@ services:
       - ${MEDIA_ROOT}/books:/data/books:ro
     user: "1000:1000"
     restart: unless-stopped
+
+networks:
+  public-komga:

@@ -55,6 +55,7 @@ some services have their own tailscale sidecar container for remote access. each
 - the service shares the sidecar's network namespace via `network_mode: service:<sidecar>`
 - tailscale serve proxies HTTPS on port 443 to the service's internal port
 - setting `AllowFunnel` to `true` in the serve config makes the service publicly accessible
+- each funneled service except homepage puts its sidecar on its own docker network (`public-<service>`) instead of `default`. a compromised public app then can't connect to the rest of the stack. `ts-homepage` joins each of these networks so its widgets can reach them, and stays on `default` for the other widgets.
 
 ## current funneled services
 | service | url | serve config |
@@ -84,6 +85,7 @@ serve configs are stored in the repo alongside their service compose files and m
    the config mount is the repo directory from step 1, not a `${CONFIG_ROOT}` path — tailscale only ever reads `serve-config.json`, so `:ro` is safe. docker creates the state directory on first start; it needs no setup.
 3. set the service's `network_mode: service:ts-myservice` and add a `depends_on` with `condition: service_healthy`
 4. if the service is new, add its compose file to the `include:` list in `docker-compose.yml`
+   - **if the service is funneled**, give its sidecar its own network: add `networks: [public-myservice]` to the sidecar and declare `networks: public-myservice:` at the end of the file. if homepage has a widget for the service, add the same network to `ts-homepage` in [homepage.yml](services/homepage/homepage.yml), in its list and its declaration. see [komga.yml](services/comics/komga.yml).
 5. enable the `funnel` node attribute in the [tailscale ACL policy](https://login.tailscale.com/admin/acls) if not already done (only needs to be done once for your tailscale account, _not_ once per service) — note this grants the capability tailnet-wide, so the only thing keeping a service private is the absence of `AllowFunnel` in its serve config
 6. if the service keeps data outside `${CONFIG_ROOT}`, add that path to the `restic backup` line in [backup/backup.sh](backup/backup.sh). if it writes its own backup zips, add them to [backup/excludes.txt](backup/excludes.txt).
 
