@@ -7,6 +7,4 @@ services:
       - LOG_HTML=${LOG_HTML:-false}
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
       - TZ=America/Chicago
-    ports:
-      - 8191:8191
     restart: unless-stopped
