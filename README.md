@@ -17,6 +17,12 @@ create the smokeping graph directory under your `CONFIG_ROOT` before the first s
 mkdir -p ${CONFIG_ROOT}/Homepage/graphs && chown 1000:1000 ${CONFIG_ROOT}/Homepage/graphs
 ```
 
+create the scrutiny config directory too. scrutiny runs as 1000, and docker creates a missing directory as root:
+
+```
+mkdir -p ${CONFIG_ROOT}/Scrutiny/config && chown 1000:1000 ${CONFIG_ROOT}/Scrutiny/config
+```
+
 then:
 
 ```
@@ -182,6 +188,11 @@ if it's `ts-homepage` that has degraded, the dashboard carrying the graph is its
 ```
 http://<vm-ip>:8085/smokeping/?displaymode=a&start=-24h&end=now&target=Tailnet.AllFunnels
 ```
+
+# drive health
+[scrutiny](https://github.com/AnalogJ/scrutiny) shows the SMART data of the disks, in its web ui at `scrutiny.<tailnet>` and in the "Drive Health" tile on homepage. the disks are on a different machine. a collector on that machine reads them each night at 02:00 and sends the data to port 8081 of the stack. after each run, a script pings healthchecks.io, which emails you if a disk fails or the collector stops.
+
+the scrutiny images are pinned, so `docker compose pull` does not update them. [services/scrutiny/collector/README.md](services/scrutiny/collector/README.md) has the files for the other machine, the installation steps, and the update steps.
 
 # backups
 a systemd timer backs up this checkout, the appdata, and the books and music libraries to backblaze b2 with restic each night. [backup/README.md](backup/README.md) describes how it works, how to install it, and how to restore.
