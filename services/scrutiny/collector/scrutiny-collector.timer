@@ -1,0 +1,15 @@
+# the timer from scrutiny's docs/INSTALL_MANUAL.md (v0.9.5), unchanged. snapraid's maintenance
+# also starts at 02:00, so the disks are usually awake when the collector reads them
+[Unit]
+Description=Run Scruitiny Collector daily at 2am
+
+[Timer]
+# Standard calendar trigger
+OnCalendar=*-*-* 02:00:00
+# Ensures the job runs if the computer was off at 2am
+Persistent=true
+# Minimizes I/O spikes by staggering start time
+RandomizedDelaySec=30
+
+[Install]
+WantedBy=timers.target

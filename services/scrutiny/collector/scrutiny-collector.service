@@ -1,0 +1,46 @@
+# the rootless collector unit from scrutiny's docs/INSTALL_MANUAL.md (v0.9.5), with these changes:
+# - it waits for network-online, because the timer can start it soon after boot
+# - OnSuccess starts scrutiny-healthcheck.service after each good run
+# - ExecStart has no --api-endpoint, because collector.yaml sets it
+# - the network lock allows the docker host instead of only localhost
+# - no [Install] section: scrutiny-collector.timer starts it
+[Unit]
+Description=Daily Restricted Scrutiny Collector
+Wants=network-online.target
+After=network-online.target
+OnSuccess=scrutiny-healthcheck.service
+
+[Service]
+Type=oneshot
+User=scrutiny-svc
+Group=disk
+ExecStart=/opt/scrutiny/bin/scrutiny-collector-metrics run
+
+# --- PRIVILEGE LOCKDOWN ---
+## CAP_SYS_RAWIO is needed for SATA drives
+AmbientCapabilities=CAP_SYS_RAWIO
+CapabilityBoundingSet=CAP_SYS_RAWIO
+
+NoNewPrivileges=yes
+
+# Security/sandboxing settings
+KeyringMode=private
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateDevices=no
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+RemoveIPC=yes
+RestrictSUIDSGID=true
+
+# --- NETWORK LOCKDOWN
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+IPAddressDeny=any
+## the docker host, the same address as api.endpoint in collector.yaml
+IPAddressAllow=localhost 192.168.1.98
