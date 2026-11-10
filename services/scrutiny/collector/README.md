@@ -31,7 +31,7 @@ the script installs smartmontools and jq, creates the `scrutiny-svc` account, ve
 if a disk has a problem, the email from healthchecks.io shows the ping body. it has one line for each problem disk:
 
 - `device_status=1`: a SMART attribute is past the threshold that the disk itself sets.
-- `device_status=2`: a SMART attribute is past a scrutiny threshold. scrutiny takes its thresholds from the backblaze failure statistics.
+- `device_status=2`: a SMART attribute is past a scrutiny threshold. scrutiny takes its thresholds from the backblaze failure statistics for hard drives, so the script ignores this status for an ssd. the homepage tile still counts that ssd as failed.
 - `device_status=3`: both.
 - `stale`: scrutiny has no data from the disk in the last 12 hours, for example because the disk is gone.
 
