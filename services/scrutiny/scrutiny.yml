@@ -1,0 +1,69 @@
+---
+# scrutiny shows the SMART data of the disks. the disks are on a different machine, so this file
+# runs only the web ui and its database. the collector runs on the machine with the disks and sends
+# its readings to the LAN port below. see collector/README.md
+services:
+  ts-scrutiny:
+    extends:
+      file: ../tailscale-sidecar.yml
+      service: tailscale-sidecar
+    container_name: ts-scrutiny
+    hostname: scrutiny
+    volumes:
+      - ${CONFIG_ROOT}/ts-scrutiny/state:/var/lib/tailscale
+      - ./ts-scrutiny-config:/config:ro
+    ports:
+      - 8081:8080 # LAN port for the collector. 8080 is qbittorrent's
+    networks:
+      - default # homepage's widget reaches scrutiny here
+      - scrutiny-influxdb
+
+  scrutiny:
+    # pinned: VERSION in collector/install.sh must be the same release. update both together
+    image: ghcr.io/analogj/scrutiny:v0.10.0-web
+    container_name: scrutiny
+    network_mode: service:ts-scrutiny
+    depends_on:
+      ts-scrutiny:
+        condition: service_healthy
+      scrutiny-influxdb:
+        condition: service_healthy
+    environment:
+      - SCRUTINY_WEB_INFLUXDB_HOST=scrutiny-influxdb
+      - TZ=America/Chicago
+    volumes:
+      # must exist before the first start, owned by 1000. see "first deploy" in README.md
+      - ${CONFIG_ROOT}/Scrutiny/config:/opt/scrutiny/config
+    user: "1000:1000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  scrutiny-influxdb:
+    # pinned: influxdb upgrades migrate the data, and a migration cannot be undone
+    image: influxdb:2.8.0
+    container_name: scrutiny-influxdb
+    # no init variables: scrutiny sets up the database on its first start, with its built-in
+    # default token and password. the private network below keeps the other containers away from it
+    environment:
+      - INFLUXD_REPORTING_DISABLED=true # influxdb sends usage statistics by default
+    volumes:
+      - ${CONFIG_ROOT}/Scrutiny/influxdb:/var/lib/influxdb2
+    networks:
+      - scrutiny-influxdb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+networks:
+  # only ts-scrutiny (and so scrutiny) shares this network with influxdb. internal: no internet access
+  scrutiny-influxdb:
+    internal: true

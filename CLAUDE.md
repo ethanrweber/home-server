@@ -10,6 +10,7 @@ This VM is one piece of a larger setup that is *not* in this repo:
 - The VM runs on a Proxmox host (`pve-1`).
 - Plex runs in a separate LXC on the host, not as a compose service here.
 - Media lives on host storage mounted into the VM at `/mnt/storage/media` (`MEDIA_ROOT`).
+- The Scrutiny collector runs on the host, which has the disks. Its files and install steps are in `services/scrutiny/collector/`; the stack runs only the Scrutiny web UI and its InfluxDB.
 
 ## Architecture
 

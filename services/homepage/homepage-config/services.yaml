@@ -232,6 +232,19 @@
                 url: https://healthchecks.io
                 key: "{{HOMEPAGE_VAR_HEALTHCHECKS_KEY}}"
                 uuid: "{{HOMEPAGE_VAR_HEALTHCHECKS_UUID}}" # single-check: status + last_ping
+        - Drive Health:
+            icon: scrutiny.png
+            href: https://scrutiny.{{HOMEPAGE_VAR_TS_DOMAIN}}/
+            description: SMART status of the disks on pve-1, read each night at 02:00 (UI is tailnet-only)
+            widgets:
+              - type: scrutiny
+                url: http://ts-scrutiny:8080
+              # pinged after each collector run: down if a disk fails or the collector stops.
+              # see services/scrutiny/collector/scrutiny-healthcheck.sh
+              - type: healthchecks
+                url: https://healthchecks.io
+                key: "{{HOMEPAGE_VAR_HEALTHCHECKS_KEY}}"
+                uuid: "{{HOMEPAGE_VAR_HEALTHCHECKS_DRIVES_UUID}}"
         - Restic Backup:
             icon: mdi-backup-restore
             href: https://healthchecks.io/

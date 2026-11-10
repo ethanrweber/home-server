@@ -1,0 +1,18 @@
+# scrutiny collector settings. install as /opt/scrutiny/config/collector.yaml on the machine with
+# the disks. the full list of options is in example.collector.yaml in the scrutiny repository
+version: 1
+
+host:
+  id: pve-1 # the scrutiny ui groups the disks by this name
+
+api:
+  # the scrutiny web container, through the LAN port of ts-scrutiny. the network rule in
+  # scrutiny-collector.service and SCRUTINY_URL in scrutiny-healthcheck.service use the same address
+  endpoint: http://192.168.1.98:8081
+
+commands:
+  # -v 188,raw16: seagate disks keep three 16-bit counters in attribute 188 (command timeout).
+  # by default smartctl shows them as one large number, and scrutiny then reads billions of
+  # timeouts and marks the disk failed. raw16 shows the three counters, and scrutiny reads the last
+  # one. disks without attribute 188 ignore the option
+  metrics_smart_args: '--xall --json -v 188,raw16'

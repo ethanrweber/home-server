@@ -1,0 +1,15 @@
+# reports the disk status to healthchecks.io after each good collector run. a separate unit, so
+# that the collector unit can stay locked to the docker host while this one reaches the internet
+[Unit]
+Description=Report the scrutiny disk status to healthchecks.io
+
+[Service]
+Type=oneshot
+# HC_URL, the ping url of the "drive health" check
+EnvironmentFile=/etc/scrutiny/healthcheck.env
+# the same address as api.endpoint in collector.yaml
+Environment=SCRUTINY_URL=http://192.168.1.98:8081
+ExecStart=/opt/scrutiny/bin/scrutiny-healthcheck.sh
+# systemd creates a temporary user for each run. it is not in the disk group, and it cannot write
+# outside its own temporary folders
+DynamicUser=yes
