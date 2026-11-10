@@ -14,9 +14,12 @@ services:
       - ./ts-scrutiny-config:/config:ro
     ports:
       - 8081:8080 # LAN port for the collector. 8080 is qbittorrent's
+    networks:
+      - default # homepage's widget reaches scrutiny here
+      - scrutiny-influxdb
 
   scrutiny:
-    # pinned: the collector binary must be the same release. update both together
+    # pinned: VERSION in collector/install.sh must be the same release. update both together
     image: ghcr.io/analogj/scrutiny:v0.10.0-web
     container_name: scrutiny
     network_mode: service:ts-scrutiny
@@ -42,12 +45,16 @@ services:
 
   scrutiny-influxdb:
     # pinned: influxdb upgrades migrate the data, and a migration cannot be undone
-    image: influxdb:2.8
+    image: influxdb:2.8.0
     container_name: scrutiny-influxdb
-    # no init variables: scrutiny sets up the database on its first start and keeps the token in
-    # its config folder. back up and restore the two folders together, or scrutiny fails to start
+    # no init variables: scrutiny sets up the database on its first start, with its built-in
+    # default token and password. the private network below keeps the other containers away from it
+    environment:
+      - INFLUXD_REPORTING_DISABLED=true # influxdb sends usage statistics by default
     volumes:
       - ${CONFIG_ROOT}/Scrutiny/influxdb:/var/lib/influxdb2
+    networks:
+      - scrutiny-influxdb
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
       interval: 30s
@@ -55,3 +62,8 @@ services:
       retries: 3
       start_period: 10s
     restart: unless-stopped
+
+networks:
+  # only ts-scrutiny (and so scrutiny) shares this network with influxdb. internal: no internet access
+  scrutiny-influxdb:
+    internal: true

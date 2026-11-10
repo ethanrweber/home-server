@@ -1,8 +1,9 @@
 #!/bin/sh
 # pings the "drive health" check on healthchecks.io. scrutiny-healthcheck.service runs this script
 # after each good collector run. the ping is:
-# - success, if scrutiny shows every disk as passed, with data from the last 12 hours
-# - fail, if not. the ping body lists the problem disks, and healthchecks.io emails you
+# - success, if scrutiny shows at least one disk, and every disk as passed with data from the last
+#   12 hours
+# - fail, if not. the ping body lists the problems, and healthchecks.io emails you
 # if scrutiny does not answer, the script stops and sends no ping. healthchecks.io then emails you
 # when the grace time ends. README.md explains the ping body
 set -eu
@@ -18,6 +19,13 @@ problems=$(printf '%s' "$summary" | jq -r '
   | select(.device.device_status != 0 or $date < now - 12 * 3600)
   | "\(.device.device_name) \(.device.model_name) \(.device.serial_number): device_status=\(.device.device_status)"
     + (if $date < now - 12 * 3600 then ", stale" else "" end)')
+
+# no disks at all is a problem too, for example a new scrutiny database and a collector that finds
+# no disks
+disks=$(printf '%s' "$summary" | jq '[.data.summary[] | select(.device.archived | not)] | length')
+if [ "$disks" -eq 0 ]; then
+    problems="scrutiny lists no disks"
+fi
 
 if [ -z "$problems" ]; then
     curl -fsS --max-time 30 --retry 3 -o /dev/null "$HC_URL"
