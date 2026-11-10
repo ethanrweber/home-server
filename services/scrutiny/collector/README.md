@@ -30,9 +30,9 @@ the scrutiny containers must run before step 10.
    ```
 6. download the collector and verify its checksum. the version must be the same as the image tag in [scrutiny.yml](../scrutiny.yml). the checksum is the sha256 digest of the file on the release page:
    ```
-   v=0.9.5
+   v=0.10.0
    curl -fL -o /tmp/scrutiny-collector-metrics "https://github.com/AnalogJ/scrutiny/releases/download/v$v/scrutiny-collector-metrics-linux-amd64"
-   echo "a7745fe3d4282857be07089298a4fa29b1f34e50fc7cc1c054b2945dd9edc320  /tmp/scrutiny-collector-metrics" | sha256sum -c   # must show "OK"
+   echo "d1d5180b10b2c183670c931c38ae149544627a0525640664b754d3a0fc48a5ad  /tmp/scrutiny-collector-metrics" | sha256sum -c   # must show "OK"
    install -D -m 755 /tmp/scrutiny-collector-metrics /opt/scrutiny/bin/scrutiny-collector-metrics
    ```
 7. install the files from this folder:

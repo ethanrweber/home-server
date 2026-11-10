@@ -1,4 +1,4 @@
-# the rootless collector unit from scrutiny's docs/INSTALL_MANUAL.md (v0.9.5), with these changes:
+# the rootless collector unit from scrutiny's docs/INSTALL_MANUAL.md (v0.10.0), with these changes:
 # - it waits for network-online, because the timer can start it soon after boot
 # - OnSuccess starts scrutiny-healthcheck.service after each good run
 # - ExecStart has no --api-endpoint, because collector.yaml sets it

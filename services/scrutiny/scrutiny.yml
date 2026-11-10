@@ -17,7 +17,7 @@ services:
 
   scrutiny:
     # pinned: the collector binary must be the same release. update both together
-    image: ghcr.io/analogj/scrutiny:v0.9.5-web
+    image: ghcr.io/analogj/scrutiny:v0.10.0-web
     container_name: scrutiny
     network_mode: service:ts-scrutiny
     depends_on:
