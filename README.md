@@ -40,7 +40,7 @@ docker image prune -f
 comment out its include line in `docker-compose.yml`. `docker compose up -d` then manages only the enabled services — the disabled one's container keeps running untouched (compose warns about it as an orphan) until you remove it with `docker rm -f <container>`.
 
 # refreshing proton vpn wireguard configuration
-expires yearly, november 26th ish.
+expires yearly, november 12th ish.
 
 1. go to the [proton vpn wireguard configuration page](https://account.proton.me/u/0/vpn/WireGuard) (also linked in `.env.example`)
 2. click the existing configuration, then click extend to push its expiration back another year. if you create a new configuration instead, copy its private key into `WG_PRIVATE_KEY` in `.env` — the options to pick are listed next to it in `.env.example`

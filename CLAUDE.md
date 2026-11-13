@@ -34,7 +34,7 @@ The read-only helper scripts under `scripts/` are documented in `scripts/README.
 
 ## VPN constraint (important)
 
-qBittorrent has no network of its own — it uses `network_mode: service:gluetun` so all torrent traffic goes through ProtonVPN. Never give qbittorrent its own ports or network; its web UI port (8080) is published on the **gluetun** container. The ProtonVPN WireGuard key expires yearly (~Nov 26); the refresh procedure is in README.md.
+qBittorrent has no network of its own — it uses `network_mode: service:gluetun` so all torrent traffic goes through ProtonVPN. Never give qbittorrent its own ports or network; its web UI port (8080) is published on the **gluetun** container. The ProtonVPN WireGuard key expires yearly (~Nov 12); the refresh procedure is in README.md.
 
 ## Tailscale sidecar pattern
 
