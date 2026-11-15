@@ -9,5 +9,9 @@
     disk: /
 
 - resources:
+    label: "Downloads"
+    disk: /downloads
+
+- resources:
     label: "Media"
     disk: /media
